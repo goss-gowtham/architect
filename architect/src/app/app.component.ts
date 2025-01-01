@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { PrimeNG } from 'primeng/config';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,11 +6,6 @@ import { PrimeNG } from 'primeng/config';
   styleUrls: ['./app.component.scss'],
   standalone: false
 })
-export class AppComponent implements OnInit {
-
-  constructor(private primeng: PrimeNG) {}
-
-  ngOnInit() {
-      this.primeng.ripple.set(true);
-  }
+export class AppComponent {
+  isCollapsed = false;
 }
