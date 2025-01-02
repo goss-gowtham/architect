@@ -1,5 +1,5 @@
 <div nz-row nzJustify="center">
-    <div nz-col nzXs="12" nzSm="12" nzMd="12" nzXl="10">
+    <div nz-col nzXs="24" nzSm="24" nzMd="24" nzXl="12">
         <ng-container *ngIf="!isLoggedIn; else loggedInTemplate">
             <nz-card nzTitle="Access" [nzHoverable]="true" [nzActions]="[loginButton]">
                 <form nz-form [formGroup]="validateForm" class="login-form" (keydown.enter)="submitForm()">
