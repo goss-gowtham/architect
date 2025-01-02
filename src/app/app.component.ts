@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   standalone: false
 })
 export class AppComponent {
-  isCollapsed = false;
+  visible = false;
   isLoggedIn = false;
   currentUser: any;
 

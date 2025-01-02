@@ -12,5 +12,21 @@ nz-icon {
 button:hover {
     box-shadow: 0 8px 8px rgba(0, 0, 0, 0.2), 0 12px 40px rgba(0, 0, 0, 0.2);
     transition: box-shadow 0.3s ease-in-out;
-
 }
+
+.menu-item {
+    padding: 10px 20px;
+}
+
+.menu-item a {
+    margin-left: 10px;
+}
+
+.header {
+    padding: 12px 24px;
+    background: #fff;
+  }
+
+  h3 {
+    margin: 0px !important;
+  }

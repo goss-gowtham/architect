@@ -16,13 +16,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient } from '@angular/common/http';
 import { AccessComponent } from './features/access/access.component';
-
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzTypographyModule } from 'ng-zorro-antd/typography';
+import { NzFlexModule } from 'ng-zorro-antd/flex';
 
 registerLocaleData(en);
 
@@ -48,7 +51,11 @@ registerLocaleData(en);
     NzInputModule,
     NzCardModule,
     NzSpaceModule,
-    NzGridModule
+    NzDrawerModule,
+    NzGridModule,
+    NzTypographyModule,
+    NzFlexModule,
+    NzDividerModule
   ],
   bootstrap: [AppComponent],
   providers: [

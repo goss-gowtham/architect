@@ -1,5 +1,5 @@
 <div nz-row [nzGutter]="[48,24]">
-    <div *ngFor="let card of cards" class="gutter-row" nz-col nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="6">
+    <div *ngFor="let card of cards" nz-col="24" nzXs="24" nzSm="24" nzMd="12" nzLg="6" nzXl="6">
         <nz-card class="card-shadow" style="width: 280px; height: 320px" [nzCover]="coverTemplate" [nzActions]="[payDownload]">
             <nz-card-meta
               [nzTitle]="card.project"

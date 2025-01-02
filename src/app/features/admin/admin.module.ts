@@ -4,6 +4,7 @@ import { AdminRoutingModule } from './admin-routing.module';
 import { AdminComponent } from './admin.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzFlexModule } from 'ng-zorro-antd/flex';
 
 @NgModule({
   declarations: [AdminComponent],
@@ -11,7 +12,8 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
     CommonModule,
     AdminRoutingModule,
     NzButtonModule,
-    NzGridModule
+    NzGridModule,
+    NzFlexModule
   ]
 })
 export class AdminModule { }

@@ -7,6 +7,7 @@ import { ClientsComponent } from './clients.component';
 import {NzButtonModule } from 'ng-zorro-antd/button'
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzFlexModule } from 'ng-zorro-antd/flex';
 
 @NgModule({
   declarations: [ClientsComponent],
@@ -17,7 +18,8 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
     NzIconModule,
     NzButtonModule,
     NzTagModule,
-    NzGridModule
+    NzGridModule,
+    NzFlexModule
   ]
 })
 export class ClientsModule { }

@@ -1,30 +1,43 @@
 <nz-layout class="app-layout">
-  <nz-header>
-    <ul nz-menu nzMode="horizontal" nzFlex nzJustify="space-between">
-        <li nz-menu-item>Architect Design</li>
-        <li nz-menu-item nzMatchRouter>
-          <nz-icon nzType="dashboard" nzTheme="outline" />
-          <a routerLink="/access">Access</a>
-        </li>
-        <li nz-menu-item nzMatchRouter *ngIf="userHasRole('admin')">
-          <nz-icon nzType="usergroup-add" nzTheme="outline" />
-          <a routerLink="/admin">Admin</a>
-        </li>
-        <li nz-menu-item nzMatchRouter *ngIf="userHasRole('user')">
-          <nz-icon nzType="appstore" nzTheme="outline" />
-          <a routerLink="/clients">Clients</a>
-        </li>
-      <span>
-        <button nz-button class="login-form-button login-form-margin" [nzType]="'default'"
-          *ngIf="isLoggedIn; else loginButton" (click)="logout()"><nz-icon nzType="logout" />Logout</button>
-        <ng-template #loginButton>
+    <div class="header" nz-row nzFlex nzJustify="space-between" nz-align="center">
+      <h3 nz-typography>Architect Design</h3>
+      <span nzJustify="flex-end">
+        <button nz-button nzType="default" (click)="visible = !visible"><nz-icon nzType="menu" nzTheme="outline" />Menu</button>
+        <ng-template #footerTemplate>
           <button nz-button class="login-form-button login-form-margin" [nzType]="'default'"
-            *ngIf="!isAccessPage()" routerLink="/access"><nz-icon nzType="login"/>Login</button>
+            *ngIf="isLoggedIn; else loginButton" (click)="logout()"><nz-icon nzType="logout" />Logout</button>
         </ng-template>
+          <ng-template #loginButton>
+            <button nz-button class="login-form-button login-form-margin" [nzType]="'default'"
+              *ngIf="!isAccessPage()" routerLink="/access"><nz-icon nzType="login"/>Login</button>
+          </ng-template>
       </span>
-    </ul>
-  </nz-header>
+    </div>
+  
   <nz-content>
+    <nz-drawer
+      [nzClosable]="true"
+      [nzVisible]="visible"
+      nzPlacement="right"
+      nzTitle="Architect Design"
+      [nzFooter]="footerTemplate"
+      (nzOnClose)="visible = false"
+    >
+      <ng-container nz-menu *nzDrawerContent>
+        <div nz-menu-item nzMatchRouter class="menu-item">
+          <nz-icon nzType="dashboard" nzTheme="outline" />
+          <a routerLink="/access" (click)="visible=false">Access</a>
+        </div>
+        <div nz-menu-item nzMatchRouter *ngIf="userHasRole('admin')" class="menu-item">
+          <nz-icon nzType="usergroup-add" nzTheme="outline" />
+          <a routerLink="/admin" (click)="visible=false">Admin</a>
+        </div>
+        <div nz-menu-item nzMatchRouter *ngIf="userHasRole('user')" class="menu-item">
+          <nz-icon nzType="appstore" nzTheme="outline" />
+          <a routerLink="/clients" (click)="visible=false">Clients</a>
+        </div>
+      </ng-container>
+    </nz-drawer>
     <div class="inner-content">
       <router-outlet></router-outlet>
     </div>
