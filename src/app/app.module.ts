@@ -12,15 +12,23 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { provideNzI18n } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
 import en from '@angular/common/locales/en';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient } from '@angular/common/http';
+import { AccessComponent } from './features/access/access.component';
+
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzSpaceModule } from 'ng-zorro-antd/space';
 
 registerLocaleData(en);
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    AccessComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +39,14 @@ registerLocaleData(en);
     IconsProviderModule,
     NzLayoutModule,
     NzMenuModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    NzButtonModule,
+    NzFormModule,
+    NzCheckboxModule,
+    NzInputModule,
+    NzCardModule,
+    NzSpaceModule
   ],
   bootstrap: [AppComponent],
   providers: [
