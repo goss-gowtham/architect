@@ -1,1 +1,22 @@
-Just a user!
+<div nz-row [nzGutter]="[48,24]">
+    <div *ngFor="let card of cards" class="gutter-row" nz-col nzXs="12" nzSm="12" nzMd="12" nzLg="12" nzXl="6">
+        <nz-card class="card-shadow" style="width: 280px; height: 320px" [nzCover]="coverTemplate" [nzActions]="[payDownload]">
+            <nz-card-meta
+              [nzTitle]="card.project"
+              [nzDescription]="card.desc"
+            ></nz-card-meta>
+        </nz-card>
+        <ng-template #coverTemplate>
+            <div style="position: relative;">
+                <img *ngIf="card?.thumbnail; else placeholder" [alt]="card.project" width="280px" style="min-height:150px" [src]="card?.thumbnail" />
+                <ng-template #placeholder>
+                    <div style="width: 280px; height: 170px; background-color: #f0f0f0;"></div>
+                </ng-template>
+                <nz-tag nzColor="success" style="position: absolute; top: 5px; right: 5px;">INR {{card.pay}}</nz-tag>
+            </div>
+        </ng-template>
+        <ng-template #payDownload>
+            <button nz-button nzType="default" nzShape="round"><nz-icon nzType="credit-card" />Download</button>
+        </ng-template>
+    </div>
+</div>

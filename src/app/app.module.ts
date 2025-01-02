@@ -22,6 +22,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 
 registerLocaleData(en);
 
@@ -46,7 +47,8 @@ registerLocaleData(en);
     NzCheckboxModule,
     NzInputModule,
     NzCardModule,
-    NzSpaceModule
+    NzSpaceModule,
+    NzGridModule
   ],
   bootstrap: [AppComponent],
   providers: [

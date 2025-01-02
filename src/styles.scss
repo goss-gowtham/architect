@@ -3,3 +3,14 @@
 nz-icon {
     padding-right: 0.5rem;
 }
+
+.card-shadow {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 10px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+button:hover {
+    box-shadow: 0 8px 8px rgba(0, 0, 0, 0.2), 0 12px 40px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease-in-out;
+
+}
