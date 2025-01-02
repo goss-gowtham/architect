@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 export class AccessComponent {
   
   validateForm;
+  isLoggedIn = false;
 
   constructor(public fb: NonNullableFormBuilder,
     private authService: AuthService,
@@ -19,6 +20,10 @@ export class AccessComponent {
     this.validateForm = this.fb.group({
       username: this.fb.control('', [Validators.required]),
       password: this.fb.control('', [Validators.required])
+    });
+
+    this.authService.currentUser.subscribe(user => {
+      this.isLoggedIn = !!user;
     });
   }
 

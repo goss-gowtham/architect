@@ -11,15 +11,25 @@ import { Router } from '@angular/router';
 export class AppComponent {
   isCollapsed = false;
   isLoggedIn = false;
+  currentUser: any;
 
   constructor(private authService: AuthService, private router: Router) {
     this.authService.currentUser.subscribe(user => {
       this.isLoggedIn = !!user;
+      this.currentUser = user;
     });
+  }
+
+  isAccessPage(): boolean {
+    return this.router.url === '/access';
   }
 
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/access']);
+  }
+
+  userHasRole(role: string): boolean {
+    return this.currentUser && this.currentUser.roles && this.currentUser.roles.includes(role);
   }
 }

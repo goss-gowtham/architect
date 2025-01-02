@@ -14,11 +14,12 @@ export class AuthService {
   public currentUser: Observable<User | null>;
 
   constructor() {
-    this.currentUserSubject = new BehaviorSubject<User | null>(null);
+    const storedUser = sessionStorage.getItem('currentUser');
+    this.currentUserSubject = new BehaviorSubject<User | null>(storedUser ? JSON.parse(storedUser) : null);
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
-login(userDetails: any): void {
+  login(userDetails: any): void {
     // For demo purposes, let's use a simple hardcoded user validation.
     const validUsers: any = {
         'admin': { password: 'adminpass', roles: ['admin', 'user'] },
@@ -36,7 +37,7 @@ login(userDetails: any): void {
         this.currentUserSubject.next(null);
         sessionStorage.removeItem('currentUser');
     }
-}
+  }
 
   logout(): void {
     this.currentUserSubject.next(null);
