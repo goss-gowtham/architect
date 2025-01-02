@@ -13,6 +13,7 @@ export class AccessComponent {
   
   validateForm;
   isLoggedIn = false;
+  loginError: boolean = false;
 
   constructor(public fb: NonNullableFormBuilder,
     private authService: AuthService,
@@ -29,16 +30,21 @@ export class AccessComponent {
 
   submitForm(): void {
     if (this.validateForm.valid) {
-      this.authService.login(this.validateForm.value);
-      this.authService.currentUser.subscribe(user => {
+      const loginSuccess = this.authService.login(this.validateForm.value);
+      if (loginSuccess) {
+        this.authService.currentUser.subscribe(user => {
 
-        if (user?.roles.includes('admin')) {
-          this.router.navigate(['/admin']);
-        }
-        else if (user?.roles.includes('user')) {
-          this.router.navigate(['/clients']);
-        }
-      })
+          if (user?.roles.includes('admin')) {
+            this.router.navigate(['/admin']);
+          }
+          else if (user?.roles.includes('user')) {
+            this.router.navigate(['/clients']);
+          }
+        });
+        this.loginError = false;
+      } else {
+        this.loginError = true;
+      }
     } else {
       Object.values(this.validateForm.controls).forEach(control => {
         if (control.invalid) {

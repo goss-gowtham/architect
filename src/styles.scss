@@ -25,8 +25,13 @@ button:hover {
 .header {
     padding: 12px 24px;
     background: #fff;
-  }
+}
 
-  h3 {
+h3 {
     margin: 0px !important;
-  }
+}
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+}

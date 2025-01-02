@@ -18,6 +18,9 @@
                             </nz-input-group>
                         </nz-form-control>
                     </nz-form-item>
+                    <div *ngIf="loginError" class="error-message">
+                        Invalid username or password.
+                    </div>
                 </form>
                 <ng-template #loginButton>
                     <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'"

@@ -19,7 +19,7 @@ export class AuthService {
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
-  login(userDetails: any): void {
+  login(userDetails: any): boolean {
     // For demo purposes, let's use a simple hardcoded user validation.
     const validUsers: any = {
         'admin': { password: 'adminpass', roles: ['admin', 'user'] },
@@ -31,11 +31,13 @@ export class AuthService {
         const userData = { username: userDetails?.username, roles: user.roles };
         this.currentUserSubject.next(userData);
         sessionStorage.setItem('currentUser', JSON.stringify(userData));
+        return true;
     } else {
         // Handle invalid login
         console.error('Invalid username or password');
         this.currentUserSubject.next(null);
         sessionStorage.removeItem('currentUser');
+        return false;
     }
   }
 
