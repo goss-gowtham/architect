@@ -12,11 +12,13 @@ export class AppComponent {
   visible = false;
   isLoggedIn = false;
   currentUser: any;
+  pageTitle: any = "Architect Design";
 
   constructor(private authService: AuthService, private router: Router) {
     this.authService.currentUser.subscribe(user => {
       this.isLoggedIn = !!user;
       this.currentUser = user;
+      this.pageTitle = user?.client;
     });
   }
 

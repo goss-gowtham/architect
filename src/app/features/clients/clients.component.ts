@@ -21,12 +21,12 @@ export class ClientsComponent implements OnInit {
     if (currentUser) {
       this.dbService.getClientLogo(currentUser.client).subscribe((logoUrl: string) => {
         this.clientLogo = logoUrl;
-        this.dbService.getUser(currentUser.id).subscribe((user: User | null) => {
-          if (user) {
-            this.cards = user.projects.map(project => ({
+        this.dbService.getUsers(currentUser.client).subscribe((users: User[]) => {
+          if (users) {
+            this.cards = users.flatMap((user) => user.projects.map(project => ({
               ...project,
               thumbnail: this.clientLogo
-            }));
+            })));
           }
         }, (error) => {
           console.error("Error fetching user projects:", error);
