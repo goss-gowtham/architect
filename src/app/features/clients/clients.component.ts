@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { DbService } from '../../services/db.service';
 import { CardDTO } from '../../models/clients.dto';
-import { User } from '../../models/user.dto';
+import { User, Roles } from '../../models/user.dto';
 
 @Component({
   selector: 'app-clients',
@@ -20,7 +20,7 @@ export class ClientsComponent implements OnInit {
   ngOnInit() {
     const currentUser = this.authService.currentUserValue;
     if (currentUser) {
-      this.isAdminOrMaster = currentUser.roles.includes('admin') || currentUser.roles.includes('master');
+      this.isAdminOrMaster = currentUser.roles.includes(Roles.admin) || currentUser.roles.includes(Roles.master);
       this.dbService.getClientLogo(currentUser.client).subscribe((logoUrl: string) => {
         this.clientLogo = logoUrl;
         this.dbService.getUsers(currentUser.client).subscribe((users: User[]) => {
