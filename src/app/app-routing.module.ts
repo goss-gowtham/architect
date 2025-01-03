@@ -22,7 +22,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: '/access',
+    redirectTo: 'access',
     pathMatch: 'full'
   },
   {

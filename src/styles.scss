@@ -35,8 +35,21 @@ h3 {
     margin-top: 10px;
 }
 
-@media (max-width: 350px) {
+.button-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.button-flex button {
+  flex: 1 1 auto;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 450px) {
   .user-list-section {
+    width: 270px;
     overflow-x: auto;
   }
 
@@ -48,6 +61,43 @@ h3 {
 
   nz-table table {
     width: 100%;
-    min-width: 600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-list-section {
+    overflow-x: auto;
+  }
+
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  nz-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  nz-table table {
+    width: 100%;
+  }
+
+  .admin-form nz-row {
+    flex-direction: column;
+  }
+
+  .admin-form nz-col {
+    width: 100%;
+  }
+}
+
+@media (min-width: 769px) {
+  .admin-container, .user-list-section {
+    max-width: 1200px;
+    min-width: 500px;
+    margin: 0 auto;
   }
 }

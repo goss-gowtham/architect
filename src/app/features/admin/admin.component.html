@@ -13,10 +13,10 @@
             <nz-table #basicTable [nzData]="filteredUserData" [nzBordered]="true">
               <thead>
                 <tr>
-                  <th nzWidth="25%">Username</th>
-                  <th nzWidth="25%">Roles</th>
+                  <th nzWidth="40%">Username</th>
+                  <th nzWidth="30%">Roles</th>
                   <th *ngIf="isMaster" nzWidth="25%">Client</th>
-                  <th nzWidth="50%">Actions</th>
+                  <th nzWidth="30%">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -24,7 +24,7 @@
                   <td><a routerLink="/clients"> {{ user.username }}</a></td>
                   <td>{{ user.roles.join(', ') }}</td>
                   <td *ngIf="isMaster">{{ user.client }}</td>
-                  <td>
+                  <td class="button-flex">
                     <button nz-button nzType="default" nzShape="round" (click)="navigateToAddProject(user.id)">
                       <nz-icon nzType="plus" nzTheme="outline" />Project
                     </button>
