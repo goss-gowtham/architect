@@ -19,9 +19,12 @@
     "@angular/platform-browser-dynamic": "~19.0.0",
     "@angular/router": "~19.0.0",
     "@ctrl/tinycolor": "^4.1.0",
+    "bcryptjs": "^2.4.3",
+    "firebase": "^11.1.0",
     "ng-zorro-antd": "^19.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.4.0",
+    "uuid": "^11.0.3",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

@@ -5,7 +5,7 @@
         <button nz-button nzType="default" (click)="visible = !visible"><nz-icon nzType="menu" nzTheme="outline" />Menu</button>
         <ng-template #footerTemplate>
           <button nz-button class="login-form-button login-form-margin" [nzType]="'default'"
-            *ngIf="isLoggedIn; else loginButton" (click)="logout()"><nz-icon nzType="logout" />Logout</button>
+            *ngIf="isLoggedIn; else loginButton" (click)="logout(); visible=false"><nz-icon nzType="logout" />Logout</button>
         </ng-template>
           <ng-template #loginButton>
             <button nz-button class="login-form-button login-form-margin" [nzType]="'default'"

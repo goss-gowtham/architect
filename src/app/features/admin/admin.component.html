@@ -1,1 +1,110 @@
-<button nz-button nzType="primary">Work in Progress nanva</button>
+<div class="admin-container">
+  <nz-tabset>
+    <nz-tab nzTitle="Manage Users">
+      <div class="user-list-section">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input type="text" nz-input placeholder="Search users" [(ngModel)]="searchValue" (input)="searchUsers()" />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <nz-icon nzType="search"></nz-icon>
+        </ng-template>
+        <div *ngIf="filteredUserData.length > 0">
+          <nz-table #basicTable [nzData]="filteredUserData" [nzBordered]="true">
+            <thead>
+              <tr>
+                <th nzWidth="25%">Username</th>
+                <th nzWidth="50%">Roles</th>
+                <th *ngIf="isMaster" nzWidth="25%">Client</th>
+                <th nzWidth="25%">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of filteredUserData">
+                <td>{{ user.username }}</td>
+                <td>{{ user.roles.join(', ') }}</td>
+                <td *ngIf="isMaster">{{ user.client }}</td>
+                <td>
+                  <button *ngIf="user.roles.indexOf('Master') === -1" nz-button nzType="default" nzDanger
+                    (click)="deleteUser(user.id)" nzShape="round">
+                    <nz-icon nzType="delete" nzTheme="outline" />
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+        <div *ngIf="filteredUserData.length === 0">
+          <p>No users found.</p>
+        </div>
+      </div>
+    </nz-tab>
+    <nz-tab nzTitle="Add User">
+      <form [formGroup]="addUserForm" (ngSubmit)="addUser()" class="admin-form">
+        <div nz-row nzGutter="16">
+          <div nz-col nzXs="24" nzSm="24" nzMd="12">
+            <nz-form-item>
+              <nz-form-control class="w-100">
+                <nz-input-group nzPrefixIcon="user">
+                  <input formControlName="username" nz-input placeholder="Username" />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzXs="24" nzSm="24" nzMd="12">
+            <nz-form-item>
+              <nz-form-control class="w-100">
+                <nz-input-group nzPrefixIcon="lock">
+                  <input formControlName="password" nz-input type="password" placeholder="Password" />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div *ngIf="isMaster" nz-row nzGutter="16">
+          <div nz-col nzXs="24" nzSm="24" nzMd="12">
+            <nz-form-item>
+              <nz-form-control class="w-100">
+                <nz-select formControlName="userRoles" nzMode="multiple" nzPlaceHolder="Select roles">
+                  <nz-option *ngFor="let role of roles" [nzTitle]="role" [nzLabel]="role" [nzValue]="role"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzXs="24" nzSm="24" nzMd="12">
+            <nz-form-item>
+              <nz-form-control class="w-100">
+                <nz-select formControlName="client" nzPlaceHolder="Select client">
+                  <nz-option *ngFor="let client of clients" [nzTitle]="client" [nzLabel]="client" [nzValue]="client"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <button nz-button nzType="primary" [disabled]="addUserForm.invalid">Add User</button>
+      </form>
+    </nz-tab>
+    <nz-tab nzTitle="Add Client">
+      <form [formGroup]="addClientForm" (ngSubmit)="addClient()" class="admin-form">
+        <div nz-row nzGutter="16">
+          <div nz-col nzXs="24" nzSm="24" nzMd="12">
+            <nz-form-item>
+              <nz-form-control class="w-100">
+                <nz-input-group nzPrefixIcon="team">
+                  <input formControlName="clientName" nz-input placeholder="Client Name" />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzXs="24" nzSm="24" nzMd="12">
+            <nz-form-item>
+              <nz-form-control nzErrorTip="Please upload a logo!">
+                <input type="file" (change)="onLogoFileChange($event)" class="w-100" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <button nz-button nzType="primary" [disabled]="addClientForm.invalid">Add Client</button>
+      </form>
+    </nz-tab>
+  </nz-tabset>
+</div>

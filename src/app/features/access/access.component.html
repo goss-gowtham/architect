@@ -4,7 +4,7 @@
             <nz-card nzTitle="Access" [nzHoverable]="true" [nzActions]="[loginButton]">
                 <form nz-form [formGroup]="validateForm" class="login-form" (keydown.enter)="submitForm()">
                     <nz-form-item>
-                        <nz-form-control nzErrorTip="Please input your username!">
+                        <nz-form-control  class="w-100" nzErrorTip="Please input your username!">
                             <nz-input-group nzPrefixIcon="user">
                                 <input type="text" nz-input formControlName="username" placeholder="Username"
                                     autofocus />
@@ -12,7 +12,7 @@
                         </nz-form-control>
                     </nz-form-item>
                     <nz-form-item>
-                        <nz-form-control nzErrorTip="Please input your Password!">
+                        <nz-form-control  class="w-100" nzErrorTip="Please input your Password!">
                             <nz-input-group nzPrefixIcon="lock">
                                 <input type="password" nz-input formControlName="password" placeholder="Password" />
                             </nz-input-group>

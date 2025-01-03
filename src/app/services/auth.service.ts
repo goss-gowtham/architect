@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { CryptoService } from './crypto.service';
+import { DbService } from './db.service';
+import { switchMap, map } from 'rxjs/operators';
 
 export interface User {
   username: string;
   roles: string[];
+  client: string;
 }
 
 @Injectable({
@@ -13,32 +17,32 @@ export class AuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 
-  constructor() {
+  constructor(private cryptoService: CryptoService, private dbService: DbService) {
     const storedUser = sessionStorage.getItem('currentUser');
     this.currentUserSubject = new BehaviorSubject<User | null>(storedUser ? JSON.parse(storedUser) : null);
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
-  login(userDetails: any): boolean {
-    // For demo purposes, let's use a simple hardcoded user validation.
-    const validUsers: any = {
-        'admin': { password: 'adminpass', roles: ['admin', 'user'] },
-        'user': { password: 'userpass', roles: ['user'] },
-    };
-
-    const user = validUsers[userDetails?.username];
-    if (user && user.password === userDetails?.password) {
-        const userData = { username: userDetails?.username, roles: user.roles };
-        this.currentUserSubject.next(userData);
-        sessionStorage.setItem('currentUser', JSON.stringify(userData));
-        return true;
-    } else {
-        // Handle invalid login
-        console.error('Invalid username or password');
-        this.currentUserSubject.next(null);
-        sessionStorage.removeItem('currentUser');
+  login(userDetails: any): Observable<boolean> {
+    return this.dbService.getUser(userDetails?.username, userDetails?.client).pipe(
+      switchMap(user => this.cryptoService.hashPassword(userDetails?.password).then(hashedPassword => {
+        if (user && user.password === hashedPassword) {
+          const userData = { username: userDetails?.username, roles: user.roles, client: user.client };
+          this.currentUserSubject.next(userData);
+          sessionStorage.setItem('currentUser', JSON.stringify(userData));
+          return true;
+        }
         return false;
-    }
+      })),
+      map(success => {
+        if (!success) {
+          console.error('Invalid username or password');
+          this.currentUserSubject.next(null);
+          sessionStorage.removeItem('currentUser');
+        }
+        return success;
+      })
+    );
   }
 
   logout(): void {

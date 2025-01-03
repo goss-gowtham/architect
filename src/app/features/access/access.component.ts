@@ -30,21 +30,22 @@ export class AccessComponent {
 
   submitForm(): void {
     if (this.validateForm.valid) {
-      const loginSuccess = this.authService.login(this.validateForm.value);
-      if (loginSuccess) {
-        this.authService.currentUser.subscribe(user => {
-
-          if (user?.roles.includes('admin')) {
-            this.router.navigate(['/admin']);
-          }
-          else if (user?.roles.includes('user')) {
-            this.router.navigate(['/clients']);
-          }
-        });
-        this.loginError = false;
-      } else {
+      this.authService.login(this.validateForm.value).subscribe(loginSuccess => {
+        if (loginSuccess) {
+          this.authService.currentUser.subscribe(user => {
+            if (user?.roles.includes('admin') || user?.roles.includes('master')) {
+              this.router.navigate(['/admin']);
+            } else if (user?.roles.includes('user') || user?.roles.includes('master')) {
+              this.router.navigate(['/clients']);
+            }
+          });
+          this.loginError = false;
+        } else {
+          this.loginError = true;
+        }
+      }, () => {
         this.loginError = true;
-      }
+      });
     } else {
       Object.values(this.validateForm.controls).forEach(control => {
         if (control.invalid) {
