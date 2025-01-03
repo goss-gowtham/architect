@@ -1,5 +1,5 @@
 <div class="admin-container">
-  <nz-tabset>
+  <nz-tabset #tabset>
     <nz-tab nzTitle="Manage Users">
       <div class="user-list-section">
         <nz-input-group [nzSuffix]="suffixIconSearch">
@@ -13,9 +13,9 @@
             <thead>
               <tr>
                 <th nzWidth="25%">Username</th>
-                <th nzWidth="50%">Roles</th>
+                <th nzWidth="25%">Roles</th>
                 <th *ngIf="isMaster" nzWidth="25%">Client</th>
-                <th nzWidth="25%">Actions</th>
+                <th nzWidth="50%">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -24,9 +24,13 @@
                 <td>{{ user.roles.join(', ') }}</td>
                 <td *ngIf="isMaster">{{ user.client }}</td>
                 <td>
-                  <button *ngIf="user.roles.indexOf('Master') === -1" nz-button nzType="default" nzDanger
+                  <button *ngIf="user.roles.indexOf('master') === -1" nz-button nzType="default" nzDanger
                     (click)="deleteUser(user.id)" nzShape="round">
                     <nz-icon nzType="delete" nzTheme="outline" />
+                  </button>
+                  <button nz-button nzType="default" nzShape="round" (click)="navigateToAddProject(user.id)">
+                    <nz-icon nzType="plus" nzTheme="outline" />
+                    Add Project
                   </button>
                 </td>
               </tr>

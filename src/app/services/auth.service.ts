@@ -5,6 +5,7 @@ import { DbService } from './db.service';
 import { switchMap, map } from 'rxjs/operators';
 
 export interface User {
+  id: string;
   username: string;
   roles: string[];
   client: string;
@@ -24,10 +25,10 @@ export class AuthService {
   }
 
   login(userDetails: any): Observable<boolean> {
-    return this.dbService.getUser(userDetails?.username, userDetails?.client).pipe(
+    return this.dbService.getUserByUsername(userDetails?.username).pipe(
       switchMap(user => this.cryptoService.hashPassword(userDetails?.password).then(hashedPassword => {
         if (user && user.password === hashedPassword) {
-          const userData = { username: userDetails?.username, roles: user.roles, client: user.client };
+          const userData = { id: user.id, username: user.username, roles: user.roles, client: user.client };
           this.currentUserSubject.next(userData);
           sessionStorage.setItem('currentUser', JSON.stringify(userData));
           return true;

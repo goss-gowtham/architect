@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, get, set, child, remove } from "firebase/database";
+import { getDatabase, ref, get, set, child, remove, update } from "firebase/database";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { CryptoService } from './crypto.service';
-import { from, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { User } from '../models/user.dto';
 
 @Injectable({
@@ -39,24 +39,41 @@ export class DbService {
         }));
     }
 
-    getRoles(): Observable<string[]> {
-        return this.getData('roles');
-    }
-
     getClients(): Observable<any> {
         return this.getData('clients');
     }
 
     addUser(user: User): Observable<void> {
-        const dbRef = ref(this.database, 'users/' + user.id);
-        return from(this.cryptoService.hashPassword(user.password).then((hashedPassword: string) => {
-            return set(dbRef, {
-                id: user.id,
-                username: user.username,
-                password: hashedPassword,
-                roles: user.roles,
-                client: user.client
-            });
+        const dbRef = ref(this.database, 'users');
+        return from(get(dbRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const users = snapshot.val();
+                const existingUser = Object.values(users).find((u: any) => u.username === user.username);
+                if (existingUser) {
+                    throw new Error('Username already exists');
+                }
+                return this.cryptoService.hashPassword(user.password).then((hashedPassword: string) => {
+                    return set(ref(this.database, 'users/' + user.id), {
+                        id: user.id,
+                        username: user.username,
+                        password: hashedPassword,
+                        roles: user.roles,
+                        client: user.client,
+                        projects: user.projects || []
+                    });
+                });
+            } else {
+                return this.cryptoService.hashPassword(user.password).then((hashedPassword: string) => {
+                    return set(ref(this.database, 'users/' + user.id), {
+                        id: user.id,
+                        username: user.username,
+                        password: hashedPassword,
+                        roles: user.roles,
+                        client: user.client,
+                        projects: user.projects || []
+                    });
+                });
+            }
         }).catch((error: any) => {
             console.error("Error adding user:", error);
             throw error;
@@ -74,17 +91,33 @@ export class DbService {
         }));
     }
 
-    getUser(userId: string, client: string): Observable<any> {
+    getUserByUsername(username: string): Observable<User | null> {
+        const dbRef = ref(this.database, 'users');
+        return from(get(dbRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const users = snapshot.val();
+                const user = Object.values(users).find((user: any) => user.username === username);
+                if (user) {
+                    return user as User;
+                } else {
+                    console.log("No user found with the given username");
+                    return null;
+                }
+            } else {
+                console.log("No data available");
+                return null;
+            }
+        }).catch((error) => {
+            console.error("Error getting user by username:", error);
+            throw error;
+        }));
+    }
+
+    getUser(userId: string): Observable<User | null> {
         const dbRef = child(ref(this.database), `users/${userId}`);
         return from(get(dbRef).then((snapshot) => {
             if (snapshot.exists()) {
-                const user = snapshot.val();
-                if (user.client === client) {
-                    return user;
-                } else {
-                    console.error("Access denied: Admins can only view users related to their client");
-                    return null;
-                }
+                return snapshot.val() as User;
             } else {
                 console.log("No data available");
                 return null;
@@ -142,6 +175,18 @@ export class DbService {
             }
         }).catch((error) => {
             console.error("Error getting client logo:", error);
+            throw error;
+        }));
+    }
+
+    addProjectToUser(userId: string, project: any): Observable<void> {
+        const dbRef = ref(this.database, `users/${userId}/projects`);
+        return from(get(dbRef).then((snapshot) => {
+            const projects = snapshot.exists() ? snapshot.val() : [];
+            projects.push(project);
+            return update(ref(this.database, `users/${userId}`), { projects });
+        }).catch((error) => {
+            console.error("Error adding project to user:", error);
             throw error;
         }));
     }

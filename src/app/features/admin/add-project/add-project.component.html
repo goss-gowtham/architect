@@ -1,0 +1,54 @@
+<div class="add-project-container">
+  <nz-card [nzHoverable]="false" [nzBordered]="false">
+    <div *ngIf="user" class="user-details">
+      <nz-descriptions nzTitle="Adding Project" nzBordered="false">
+        <nz-descriptions-item nzTitle="Username">{{ user.username }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Roles">{{ user.roles.join(', ') }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Client">{{ user.client }}</nz-descriptions-item>
+      </nz-descriptions>
+    </div>
+    <form [formGroup]="addProjectForm" (ngSubmit)="addProjectToUser()" class="admin-form">
+      <div nz-row nzGutter="16">
+        <div nz-col nzXs="24" nzSm="24" nzMd="12">
+          <nz-form-item>
+            <nz-form-control class="w-100">
+              <nz-input-group nzPrefixIcon="project">
+                <input formControlName="project" nz-input placeholder="Project Name" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzXs="24" nzSm="24" nzMd="12">
+          <nz-form-item>
+            <nz-form-control class="w-100">
+              <nz-input-group nzPrefixIcon="dollar">
+                <input formControlName="pay" nz-input placeholder="Payment" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-row nzGutter="16">
+        <div nz-col nzXs="24" nzSm="24" nzMd="24">
+          <nz-form-item>
+            <nz-form-control class="w-100">
+              <nz-input-group nzPrefixIcon="info-circle">
+                <input formControlName="desc" nz-input placeholder="Description" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-row nzGutter="16">
+        <div nz-col nzXs="24" nzSm="24" nzMd="12">
+          <nz-form-item>
+            <nz-form-control nzErrorTip="Please upload a file!">
+              <input type="file" (change)="onProjectFileChange($event)" class="w-100" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <button nz-button nzType="primary" [disabled]="addProjectForm.invalid">Add Project</button>
+    </form>
+  </nz-card>
+</div>

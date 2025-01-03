@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { NzTabSetComponent } from 'ng-zorro-antd/tabs';
 import { DbService } from '../../services/db.service';
 import { AuthService } from '../../services/auth.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -13,6 +15,7 @@ import { User, Roles } from '../../models/user.dto';
   standalone: false
 })
 export class AdminComponent implements OnInit {
+  @ViewChild('tabset', { static: false }) tabset!: NzTabSetComponent;
   isMaster: boolean = false;
   userData: User[] = [];
   filteredUserData: User[] = [];
@@ -22,18 +25,20 @@ export class AdminComponent implements OnInit {
   roles = Object.values(Roles);
   clients: any = [];
   searchValue: string = '';
+  selectedUserId: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private dbService: DbService, 
     private authService: AuthService,
-    private notification: NzNotificationService
+    private notification: NzNotificationService,
+    private router: Router
   ) {
     this.addUserForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
-      userRoles: [[], Validators.required],
-      client: [[], Validators.required]
+      userRoles: [[]],
+      client: [[]]
     });
 
     this.addClientForm = this.fb.group({
@@ -44,9 +49,10 @@ export class AdminComponent implements OnInit {
 
   ngOnInit() {
     const currentUser = this.authService.currentUserValue;
-    if (currentUser && currentUser.roles.includes(Roles.Master)) {
+    if (currentUser && currentUser.roles.includes(Roles.master)) {
       this.isMaster = true;
     }
+    console.log(currentUser, this.isMaster);
     this.getAllUsers();
     this.getClients();
   }
@@ -54,7 +60,6 @@ export class AdminComponent implements OnInit {
   getClients() {
     this.dbService.getData('clients').subscribe((clients: any) => {
       this.clients = Object.keys(clients);
-      console.log(clients);
     }, (error) => {
       console.error("Error fetching clients:", error);
     });
@@ -62,23 +67,28 @@ export class AdminComponent implements OnInit {
 
   addUser() {
     const { username, password, userRoles, client } = this.addUserForm.value;
-    const rolesValue = userRoles ? userRoles : [Roles.User];
+    const rolesValue = this.isMaster ? userRoles : [Roles.user];
     const currentUser = this.authService.currentUserValue;
-    const clientValue = client || currentUser?.client || '';
+    const clientValue = this.isMaster ? client : currentUser?.client || '';
     const userId = uuidv4();
     const newUser: User = {
       id: userId,
       username: username,
       password: password,
       roles: rolesValue,
-      client: clientValue
+      client: clientValue,
+      projects: []
     };
     this.dbService.addUser(newUser).subscribe(() => {
       this.notification.success('Success', 'User added successfully');
       this.addUserForm.reset();
       this.getAllUsers();
     }, (error) => {
-      console.error("Error adding user:", error);
+      if (error.message === 'Username already exists') {
+        this.notification.error('Error', 'Username already exists');
+      } else {
+        console.error("Error adding user:", error);
+      }
     });
   }
 
@@ -130,6 +140,10 @@ export class AdminComponent implements OnInit {
       user.username.toLowerCase().includes(this.searchValue.toLowerCase()) ||
       user.roles.some(role => role.toLowerCase().includes(this.searchValue.toLowerCase()))
     );
-    console.log(this.filteredUserData, this.userData);
+  }
+
+  navigateToAddProject(userId: string) {
+    console.log(this.filteredUserData, userId);
+    this.router.navigate(['/admin/add-project'], { queryParams: { userId } });
   }
 }

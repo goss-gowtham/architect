@@ -12,10 +12,13 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { FormsModule } from '@angular/forms';
+import { AddProjectComponent } from './add-project/add-project.component';
 
 @NgModule({
-  declarations: [AdminComponent],
+  declarations: [AdminComponent, AddProjectComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -28,7 +31,9 @@ import { FormsModule } from '@angular/forms';
     NzSelectModule,
     FormsModule,
     NzTabsModule,
-    NzIconModule
+    NzIconModule,
+    NzCardModule,
+    NzDescriptionsModule
   ],
   providers: [NzNotificationService]
 })

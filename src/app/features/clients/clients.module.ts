@@ -4,10 +4,11 @@ import { ClientsRoutingModule } from './clients-routing.module';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { ClientsComponent } from './clients.component';
-import {NzButtonModule } from 'ng-zorro-antd/button'
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 
 @NgModule({
   declarations: [ClientsComponent],
@@ -19,7 +20,8 @@ import { NzFlexModule } from 'ng-zorro-antd/flex';
     NzButtonModule,
     NzTagModule,
     NzGridModule,
-    NzFlexModule
+    NzFlexModule,
+    NzEmptyModule
   ]
 })
 export class ClientsModule { }
