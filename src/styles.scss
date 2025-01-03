@@ -34,3 +34,20 @@ h3 {
     color: red;
     margin-top: 10px;
 }
+
+@media (max-width: 350px) {
+  .user-list-section {
+    overflow-x: auto;
+  }
+
+  nz-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  nz-table table {
+    width: 100%;
+    min-width: 600px;
+  }
+}

@@ -26,6 +26,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
+import { APP_BASE_HREF } from '@angular/common';
 
 registerLocaleData(en);
 
@@ -61,7 +62,8 @@ registerLocaleData(en);
   providers: [
     provideNzI18n(en_US),
     provideAnimationsAsync(),
-    provideHttpClient()
+    provideHttpClient(),
+    { provide: APP_BASE_HREF, useValue: '/architect/' }
   ]
 })
 export class AppModule { }

@@ -13,19 +13,22 @@ import { User } from '../../models/user.dto';
 export class ClientsComponent implements OnInit {
   cards: CardDTO[] = [];
   clientLogo: string = '';
+  isAdminOrMaster: boolean = false;
 
   constructor(private authService: AuthService, private dbService: DbService) {}
 
   ngOnInit() {
     const currentUser = this.authService.currentUserValue;
     if (currentUser) {
+      this.isAdminOrMaster = currentUser.roles.includes('admin') || currentUser.roles.includes('master');
       this.dbService.getClientLogo(currentUser.client).subscribe((logoUrl: string) => {
         this.clientLogo = logoUrl;
         this.dbService.getUsers(currentUser.client).subscribe((users: User[]) => {
           if (users) {
             this.cards = users.flatMap((user) => user.projects.map(project => ({
               ...project,
-              thumbnail: this.clientLogo
+              thumbnail: this.clientLogo,
+              username: user.username
             })));
           }
         }, (error) => {

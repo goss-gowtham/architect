@@ -4,4 +4,5 @@ export interface CardDTO {
   pay: string;
   thumbnail: string;
   file: string;
+  username?: string;
 }

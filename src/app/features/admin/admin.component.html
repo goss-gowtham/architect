@@ -9,33 +9,34 @@
           <nz-icon nzType="search"></nz-icon>
         </ng-template>
         <div *ngIf="filteredUserData.length > 0">
-          <nz-table #basicTable [nzData]="filteredUserData" [nzBordered]="true">
-            <thead>
-              <tr>
-                <th nzWidth="25%">Username</th>
-                <th nzWidth="25%">Roles</th>
-                <th *ngIf="isMaster" nzWidth="25%">Client</th>
-                <th nzWidth="50%">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let user of filteredUserData">
-                <td>{{ user.username }}</td>
-                <td>{{ user.roles.join(', ') }}</td>
-                <td *ngIf="isMaster">{{ user.client }}</td>
-                <td>
-                  <button *ngIf="user.roles.indexOf('master') === -1" nz-button nzType="default" nzDanger
-                    (click)="deleteUser(user.id)" nzShape="round">
-                    <nz-icon nzType="delete" nzTheme="outline" />
-                  </button>
-                  <button nz-button nzType="default" nzShape="round" (click)="navigateToAddProject(user.id)">
-                    <nz-icon nzType="plus" nzTheme="outline" />
-                    Add Project
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </nz-table>
+          <div class="table-responsive">
+            <nz-table #basicTable [nzData]="filteredUserData" [nzBordered]="true">
+              <thead>
+                <tr>
+                  <th nzWidth="25%">Username</th>
+                  <th nzWidth="25%">Roles</th>
+                  <th *ngIf="isMaster" nzWidth="25%">Client</th>
+                  <th nzWidth="50%">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of filteredUserData">
+                  <td><a routerLink="/clients"> {{ user.username }}</a></td>
+                  <td>{{ user.roles.join(', ') }}</td>
+                  <td *ngIf="isMaster">{{ user.client }}</td>
+                  <td>
+                    <button nz-button nzType="default" nzShape="round" (click)="navigateToAddProject(user.id)">
+                      <nz-icon nzType="plus" nzTheme="outline" />Project
+                    </button>
+                    <button *ngIf="user.roles.indexOf('master') === -1" nz-button nzType="default" nzDanger
+                      (click)="deleteUser(user.id)" nzShape="round">
+                      <nz-icon nzType="delete" nzTheme="outline" />
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
         </div>
         <div *ngIf="filteredUserData.length === 0">
           <p>No users found.</p>
@@ -74,7 +75,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col nzXs="24" nzSm="24" nzMd="12">
+          <div *ngIf="isMaster" nz-col nzXs="24" nzSm="24" nzMd="12">
             <nz-form-item>
               <nz-form-control class="w-100">
                 <nz-select formControlName="client" nzPlaceHolder="Select client">
@@ -87,14 +88,14 @@
         <button nz-button nzType="primary" [disabled]="addUserForm.invalid">Add User</button>
       </form>
     </nz-tab>
-    <nz-tab nzTitle="Add Client">
+    <nz-tab *ngIf="isMaster" nzTitle="Add Company">
       <form [formGroup]="addClientForm" (ngSubmit)="addClient()" class="admin-form">
         <div nz-row nzGutter="16">
           <div nz-col nzXs="24" nzSm="24" nzMd="12">
             <nz-form-item>
               <nz-form-control class="w-100">
                 <nz-input-group nzPrefixIcon="team">
-                  <input formControlName="clientName" nz-input placeholder="Client Name" />
+                  <input formControlName="clientName" nz-input placeholder="Company Name" />
                 </nz-input-group>
               </nz-form-control>
             </nz-form-item>
@@ -107,7 +108,7 @@
             </nz-form-item>
           </div>
         </div>
-        <button nz-button nzType="primary" [disabled]="addClientForm.invalid">Add Client</button>
+        <button nz-button nzType="primary" [disabled]="addClientForm.invalid">Add Company</button>
       </form>
     </nz-tab>
   </nz-tabset>

@@ -12,7 +12,8 @@
                 <ng-template #placeholder>
                     <div style="width: 280px; height: 170px; background-color: #f0f0f0;"></div>
                 </ng-template>
-                <nz-tag nzColor="success" style="position: absolute; top: 5px; right: 5px;">INR {{card.pay}}</nz-tag>
+                <nz-tag nzColor="success" style="position: absolute; top: 5px; right: 0px;">INR {{card.pay}}</nz-tag>
+                <nz-tag *ngIf="isAdminOrMaster" nzColor="processing" style="position: absolute; bottom: 5px; right: 0px;">{{card.username}}</nz-tag>
             </div>
         </ng-template>
         <ng-template #payDownload>
