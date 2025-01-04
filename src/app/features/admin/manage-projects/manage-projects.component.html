@@ -1,0 +1,148 @@
+<div class="manage-projects-container">
+  <nz-card [nzHoverable]="false" [nzBordered]="false">
+    <div *ngIf="user" class="user-details">
+      <nz-descriptions nzTitle="Managing Projects" nzBordered="false">
+        <nz-descriptions-item nzTitle="Username">{{ user.username }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Roles">{{ user.roles.join(', ') }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Client">{{ user.client }}</nz-descriptions-item>
+      </nz-descriptions>
+    </div>
+    <nz-tabset>
+      <nz-tab nzTitle="Manage Projects">
+        <div *ngIf="projects.length > 0" class="projects-list">
+          <nz-table #basicTable [nzData]="projects" [nzBordered]="true">
+            <thead>
+              <tr>
+                <th nzWidth="20%">Project Name</th>
+                <th nzWidth="30%">Description</th>
+                <th nzWidth="10%">Payment</th>
+                <th nzWidth="10%">Paid</th>
+                <th nzWidth="30%">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let project of projects">
+                <td>{{ project.project }}</td>
+                <td>{{ project.desc }}</td>
+                <td>{{ project.pay }}</td>
+                <td>{{ project.paid ? 'Yes' : 'No' }}</td>
+                <td class="button-flex">
+                  <button nz-button nzType="default" nzShape="round" (click)="selectProjectForEdit(project)">
+                    <nz-icon nzType="edit" nzTheme="outline" />Edit
+                  </button>
+                  <button nz-button nzType="default" nzDanger nzShape="round" (click)="deleteProject(project.projectId)">
+                    <nz-icon nzType="delete" nzTheme="outline" />Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+        <div *ngIf="projects.length === 0">
+          <p>No projects found. Please add a project.</p>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Add Project">
+        <form [formGroup]="addProjectForm" (ngSubmit)="addProjectToUser()" class="admin-form">
+          <div nz-row nzGutter="16">
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <nz-form-item>
+                <nz-form-control class="w-100">
+                  <nz-input-group nzPrefixIcon="project">
+                    <input formControlName="project" nz-input placeholder="Project Name" />
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <nz-form-item>
+                <nz-form-control class="w-100">
+                  <nz-input-group nzPrefixIcon="dollar">
+                    <input formControlName="pay" nz-input placeholder="Payment" />
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div nz-row nzGutter="16">
+            <div nz-col nzXs="24" nzSm="24" nzMd="24">
+              <nz-form-item>
+                <nz-form-control class="w-100">
+                  <nz-input-group nzPrefixIcon="info-circle">
+                    <input formControlName="desc" nz-input placeholder="Description" />
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div nz-row nzGutter="16">
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <nz-form-item>
+                <nz-form-control nzErrorTip="Please upload a file!">
+                  <input type="file" (change)="onProjectFileChange($event)" class="w-100" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <button nz-button nzType="primary" [disabled]="addProjectForm.invalid">Add Project</button>
+        </form>
+      </nz-tab>
+    </nz-tabset>
+  </nz-card>
+
+  <nz-modal [(nzVisible)]="isEditModalVisible" nzTitle="Edit Project" (nzOnCancel)="handleCancelEdit()" (nzOnOk)="editProject()">
+    <div *nzModalContent>
+      <form [formGroup]="editProjectForm" class="admin-form">
+        <div nz-row nzGutter="16">
+          <div nz-col nzXs="24" nzSm="24" nzMd="12">
+            <nz-form-item>
+              <nz-form-control class="w-100">
+                <nz-input-group nzPrefixIcon="project">
+                  <input formControlName="project" nz-input placeholder="Project Name" />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzXs="24" nzSm="24" nzMd="12">
+            <nz-form-item>
+              <nz-form-control class="w-100">
+                <nz-input-group nzPrefixIcon="dollar">
+                  <input formControlName="pay" nz-input placeholder="Payment" />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row nzGutter="16">
+          <div nz-col nzXs="24" nzSm="24" nzMd="24">
+            <nz-form-item>
+              <nz-form-control class="w-100">
+                <nz-input-group nzPrefixIcon="info-circle">
+                  <input formControlName="desc" nz-input placeholder="Description" />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row nzGutter="16">
+          <div nz-col nzXs="24" nzSm="24" nzMd="12">
+            <nz-form-item>
+              <nz-form-control class="w-100">
+                <nz-input-group nzPrefixIcon="picture">
+                  <input formControlName="thumbnail" nz-input placeholder="Thumbnail URL" />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzXs="24" nzSm="24" nzMd="12">
+            <nz-form-item>
+              <nz-form-control class="w-100">
+                <nz-switch formControlName="paid" nzCheckedChildren="Paid" nzUnCheckedChildren="Unpaid"></nz-switch>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </form>
+    </div>
+  </nz-modal>
+</div>

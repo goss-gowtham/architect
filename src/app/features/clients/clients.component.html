@@ -17,7 +17,12 @@
             </div>
         </ng-template>
         <ng-template #payDownload>
-            <button nz-button nzType="default" nzShape="round" (click)="downloadFile(card.file)"><nz-icon nzType="credit-card" />Download</button>
+            <button *ngIf="card.paid || isAdminOrMaster" nz-button nzType="default" nzShape="round" (click)="handlePayAndDownload(card)">
+                <nz-icon nzType="download" />Download
+            </button>
+            <button *ngIf="!card.paid && !isAdminOrMaster" nz-button nzType="default" nzShape="round" (click)="handlePayAndDownload(card)">
+                <nz-icon nzType="credit-card" />Pay & Download
+            </button>
         </ng-template>
     </div>
 </div>

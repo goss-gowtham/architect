@@ -25,8 +25,8 @@
                   <td>{{ user.roles.join(', ') }}</td>
                   <td *ngIf="isMaster">{{ user.client }}</td>
                   <td class="button-flex">
-                    <button nz-button nzType="default" nzShape="round" (click)="navigateToAddProject(user.id)">
-                      <nz-icon nzType="plus" nzTheme="outline" />Project
+                    <button nz-button nzType="default" nzShape="round" (click)="navigateToManageProjects(user.id)">
+                      <nz-icon nzType="eye" nzTheme="outline" />Projects
                     </button>
                     <button *ngIf="user.roles.indexOf('master') === -1" nz-button nzType="default" nzDanger
                       (click)="deleteUser(user.id)" nzShape="round">

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzTabSetComponent } from 'ng-zorro-antd/tabs';
+import { UserService } from '../../services/user.service';
 import { DbService } from '../../services/db.service';
 import { AuthService } from '../../services/auth.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -29,7 +30,8 @@ export class AdminComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private dbService: DbService, 
+    private userService: UserService,
+    private dbService: DbService,
     private authService: AuthService,
     private notification: NzNotificationService,
     private router: Router
@@ -58,7 +60,7 @@ export class AdminComponent implements OnInit {
   }
 
   getClients() {
-    this.dbService.getData('clients').subscribe((clients: any) => {
+    this.dbService.getClients().subscribe((clients: any) => {
       this.clients = Object.keys(clients);
     }, (error) => {
       console.error("Error fetching clients:", error);
@@ -79,7 +81,7 @@ export class AdminComponent implements OnInit {
       client: clientValue,
       projects: []
     };
-    this.dbService.addUser(newUser).subscribe(() => {
+    this.userService.addUser(newUser).subscribe(() => {
       this.notification.success('Success', 'User added successfully');
       this.addUserForm.reset();
       this.getAllUsers();
@@ -118,7 +120,7 @@ export class AdminComponent implements OnInit {
   getAllUsers() {
     const currentUser = this.authService.currentUserValue;
     const client = this.isMaster ? null : currentUser?.client || '';
-    this.dbService.getUsers(client).subscribe((users) => {
+    this.userService.getUsers(client).subscribe((users) => {
       this.userData = users;
       this.filteredUserData = users;
     }, (error) => {
@@ -127,7 +129,7 @@ export class AdminComponent implements OnInit {
   }
 
   deleteUser(userId: string) {
-    this.dbService.deleteUser(userId).subscribe(() => {
+    this.userService.deleteUser(userId).subscribe(() => {
       console.log("User deleted successfully");
       this.getAllUsers();
     }, (error) => {
@@ -142,8 +144,7 @@ export class AdminComponent implements OnInit {
     );
   }
 
-  navigateToAddProject(userId: string) {
-    console.log(this.filteredUserData, userId);
-    this.router.navigate(['/admin/add-project'], { queryParams: { userId } });
+  navigateToManageProjects(userId: string) {
+    this.router.navigate(['/admin/manage-projects'], { queryParams: { userId } });
   }
 }

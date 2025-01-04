@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CryptoService } from './crypto.service';
-import { DbService } from './db.service';
+import { UserService } from './user.service'; // Update import
 import { switchMap, map } from 'rxjs/operators';
 
 export interface User {
@@ -18,14 +18,14 @@ export class AuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 
-  constructor(private cryptoService: CryptoService, private dbService: DbService) {
+  constructor(private cryptoService: CryptoService, private userService: UserService) { // Update constructor
     const storedUser = sessionStorage.getItem('currentUser');
     this.currentUserSubject = new BehaviorSubject<User | null>(storedUser ? JSON.parse(storedUser) : null);
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
   login(userDetails: any): Observable<boolean> {
-    return this.dbService.getUserByUsername(userDetails?.username).pipe(
+    return this.userService.getUserByUsername(userDetails?.username).pipe( // Update method
       switchMap(user => this.cryptoService.hashPassword(userDetails?.password).then(hashedPassword => {
         if (user && user.password === hashedPassword) {
           const userData = { id: user.id, username: user.username, roles: user.roles, client: user.client };
