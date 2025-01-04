@@ -8,6 +8,7 @@ import { AuthService } from '../../services/auth.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { v4 as uuidv4 } from 'uuid';
 import { User, Roles } from '../../models/user.dto';
+import { NzModalService } from 'ng-zorro-antd/modal'; // Add import
 
 @Component({
   selector: 'app-admin',
@@ -34,7 +35,8 @@ export class AdminComponent implements OnInit {
     private dbService: DbService,
     private authService: AuthService,
     private notification: NzNotificationService,
-    private router: Router
+    private router: Router,
+    private modal: NzModalService
   ) {
     this.addUserForm = this.fb.group({
       username: ['', Validators.required],
@@ -129,11 +131,18 @@ export class AdminComponent implements OnInit {
   }
 
   deleteUser(userId: string) {
-    this.userService.deleteUser(userId).subscribe(() => {
-      console.log("User deleted successfully");
-      this.getAllUsers();
-    }, (error) => {
-      console.error("Error deleting user:", error);
+    this.modal.confirm({
+      nzTitle: "Action can't be undone",
+      nzContent: 'Are you sure to remove this user and their associated projects?',
+      nzOnOk: () => {
+        this.userService.deleteUser(userId).subscribe(() => {
+          this.notification.success('Success', 'User and their associated projects removed successfully');
+          this.getAllUsers();
+        }, (error) => {
+          this.notification.error('Error', 'Error deleting user');
+          console.error("Error deleting user:", error);
+        });
+      }
     });
   }
 

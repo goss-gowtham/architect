@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ref, get, update } from "firebase/database";
+import { ref as storageRef, deleteObject } from "firebase/storage";
 import { from, Observable } from 'rxjs';
 import { CardDTO } from '../models/clients.dto';
 import { FirebaseService } from './firebase.service';
@@ -9,9 +10,11 @@ import { FirebaseService } from './firebase.service';
 })
 export class ProjectService {
     private database;
+    private storage;
 
     constructor(private firebaseService: FirebaseService) {
         this.database = this.firebaseService.getDatabase();
+        this.storage = this.firebaseService.getStorage();
     }
 
     addProjectToUser(userId: string, project: CardDTO): Observable<void> {
@@ -31,15 +34,26 @@ export class ProjectService {
     }
 
     deleteProject(userId: string, projectId: string): Observable<void> {
+        if (!userId) throw new Error("User ID cannot be null");
         const dbRef = ref(this.database, `users/${userId}/projects`);
         return from(get(dbRef).then((snapshot) => {
             if (snapshot.exists()) {
                 const projects = snapshot.val();
-                const updatedProjects = projects.filter((project: any) => project.projectId !== projectId);
-                return update(ref(this.database, `users/${userId}`), { projects: updatedProjects });
+                const project = projects.find((project: any) => project.projectId === projectId);
+                if (project) {
+                    const fileRef = storageRef(this.storage, project.file);
+                    return deleteObject(fileRef).then(() => {
+                        const updatedProjects = projects.filter((project: any) => project.projectId !== projectId);
+                        return update(ref(this.database, `users/${userId}`), { projects: updatedProjects });
+                    });
+                } else {
+                    throw new Error("Project not found");
+                }
             } else {
                 throw new Error("No projects found for the user");
             }
+        }).then(() => {
+            console.log("Project and associated file deleted successfully");
         }).catch((error) => {
             console.error("Error deleting project:", error);
             throw error;
@@ -47,6 +61,7 @@ export class ProjectService {
     }
 
     updateProjectPaymentStatus(userId: string, projectId: string, paid: boolean): Observable<void> {
+        if (!userId) throw new Error("User ID cannot be null");
         const dbRef = ref(this.database, `users/${userId}/projects`);
         return from(get(dbRef).then((snapshot) => {
             if (snapshot.exists()) {

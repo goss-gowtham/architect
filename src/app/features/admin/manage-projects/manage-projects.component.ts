@@ -120,11 +120,18 @@ export class ManageProjectsComponent implements OnInit {
 
   deleteProject(projectId: string) {
     if (this.userId) {
-      this.projectService.deleteProject(this.userId, projectId).subscribe(() => {
-        this.notification.success('Success', 'Project deleted successfully');
-        this.projects = this.projects.filter(p => p.projectId !== projectId);
-      }, (error: any) => {
-        console.error("Error deleting project:", error);
+      this.modal.confirm({
+        nzTitle: "Action can't be undone",
+        nzContent: 'Are you sure to remove this project and its associated file?',
+        nzOnOk: () => {
+          this.projectService.deleteProject(this.userId!, projectId).subscribe(() => {
+            this.notification.success('Success', 'Project and its associated file removed successfully');
+            this.projects = this.projects.filter(p => p.projectId !== projectId);
+          }, (error: any) => {
+            this.notification.error('Error', 'Error deleting project');
+            console.error("Error deleting project:", error);
+          });
+        }
       });
     }
   }

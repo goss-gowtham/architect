@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ref, get, set, child, remove } from "firebase/database";
+import { ref as storageRef, deleteObject } from "firebase/storage"; // Add import
 import { CryptoService } from './crypto.service';
 import { from, Observable } from 'rxjs';
 import { User } from '../models/user.dto';
@@ -10,9 +11,11 @@ import { FirebaseService } from './firebase.service';
 })
 export class UserService {
     private database;
+    private storage; // Add storage
 
     constructor(private cryptoService: CryptoService, private firebaseService: FirebaseService) {
         this.database = this.firebaseService.getDatabase();
+        this.storage = this.firebaseService.getStorage(); // Initialize storage
     }
 
     addUser(user: User): Observable<void> {
@@ -107,8 +110,19 @@ export class UserService {
 
     deleteUser(userId: string): Observable<void> {
         const dbRef = ref(this.database, 'users/' + userId);
-        return from(remove(dbRef).then(() => {
-            console.log("User deleted successfully");
+        return from(get(dbRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const user = snapshot.val();
+                const deleteFilePromises = user.projects.map((project: any) => {
+                    const fileRef = storageRef(this.storage, project.file);
+                    return deleteObject(fileRef);
+                });
+                return Promise.all(deleteFilePromises).then(() => remove(dbRef));
+            } else {
+                throw new Error("User not found");
+            }
+        }).then(() => {
+            console.log("User and associated files deleted successfully");
         }).catch((error) => {
             console.error("Error deleting user:", error);
             throw error;
