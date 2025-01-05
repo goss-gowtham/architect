@@ -1,4 +1,7 @@
 <div nz-row [nzGutter]="[48,24]">
+    <div *ngIf="cards.length === 0" class="no-projects-message">
+        <p>No projects available. Request for a project to pay and download.</p>
+    </div>
     <div *ngFor="let card of cards" nz-col="24" nzXs="24" nzSm="24" nzMd="12" nzLg="6" nzXl="6">
         <nz-card class="card-shadow" style="width: 280px; height: 320px" [nzCover]="coverTemplate" [nzActions]="[payDownload]">
             <nz-card-meta
@@ -8,7 +11,7 @@
         </nz-card>
         <ng-template #coverTemplate>
             <div style="position: relative;">
-                <img *ngIf="card?.thumbnail; else placeholder" [alt]="card.project" width="280px" style="min-height:150px" [src]="card?.thumbnail" />
+                <img *ngIf="card?.thumbnail; else placeholder" [alt]="card.project" width="280px" style="min-height:150px; max-height: 200px;" [src]="card?.thumbnail" />
                 <ng-template #placeholder>
                     <div style="width: 280px; height: 170px; background-color: #f0f0f0;"></div>
                 </ng-template>
