@@ -113,10 +113,10 @@ export class UserService {
         return from(get(dbRef).then((snapshot) => {
             if (snapshot.exists()) {
                 const user = snapshot.val();
-                const deleteFilePromises = user.projects.map((project: any) => {
+                const deleteFilePromises = user.projects ? user.projects.map((project: any) => {
                     const fileRef = storageRef(this.storage, project.file);
                     return deleteObject(fileRef);
-                });
+                }) : [];
                 return Promise.all(deleteFilePromises).then(() => remove(dbRef));
             } else {
                 throw new Error("User not found");
