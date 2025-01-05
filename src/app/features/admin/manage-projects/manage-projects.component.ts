@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router'; // Add Router import
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ProjectService } from '../../../services/project.service';
-import { UserService } from '../../../services/user.service'; // Add import
-import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { DbService } from 'src/app/services/db.service';
+import { v4 as uuidv4 } from 'uuid';
 import { CardDTO } from '../../../models/clients.dto';
 import { User } from '../../../models/user.dto';
-import { v4 as uuidv4 } from 'uuid';
+import { ProjectService } from '../../../services/project.service';
+import { UserService } from '../../../services/user.service'; 
 
 @Component({
   selector: 'app-manage-projects',
@@ -29,6 +30,7 @@ export class ManageProjectsComponent implements OnInit {
     private userService: UserService, // Add constructor
     private fb: FormBuilder,
     private notification: NzNotificationService,
+    private dbService: DbService,
     private modal: NzModalService
   ) {
     this.editProjectForm = this.fb.group({
@@ -69,7 +71,7 @@ export class ManageProjectsComponent implements OnInit {
     const { project, desc, pay } = this.addProjectForm.value;
     if (this.userId && this.addProjectForm.valid) {
       const filePath = `projects/${this.userId}/${uuidv4()}_${this.addProjectForm.value.file.name}`;
-      // this.dbService.uploadFile(this.addProjectForm.value.file, filePath).subscribe((fileUrl) => {
+      this.dbService.uploadFile(this.addProjectForm.value.file, filePath).subscribe((fileUrl) => {
         const projectId = uuidv4();
         const newProject: CardDTO = {
           projectId,
@@ -77,7 +79,7 @@ export class ManageProjectsComponent implements OnInit {
           desc,
           pay,
           thumbnail: '',
-          file: 'https://firebasestorage.googleapis.com/v0/b/architect-design-7.firebasestorage.app/o/projects%2F0a3ad79c-e8fc-4084-85e9-0d02919a2764%2F02de3a06-3185-4fc3-b76b-29e9e546951e_PearsonVue.png?alt=media&token=d8006cbd-97a4-4a6b-83df-383e66dab9bb',
+          file: fileUrl,
           paid: false
         };
         this.projectService.addProjectToUser(this.userId!, newProject).subscribe(() => {
@@ -87,9 +89,9 @@ export class ManageProjectsComponent implements OnInit {
         }, (error) => {
           console.error("Error adding project:", error);
         });
-      // }, (error) => {
-      //   console.error("Error uploading file:", error);
-      // });
+      }, (error) => {
+        console.error("Error uploading file:", error);
+      });
     }
   }
 
