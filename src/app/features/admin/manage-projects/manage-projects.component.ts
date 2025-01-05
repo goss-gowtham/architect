@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router'; // Add Router import
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectService } from '../../../services/project.service';
 import { UserService } from '../../../services/user.service'; // Add import
@@ -24,6 +24,7 @@ export class ManageProjectsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router, // Add Router to constructor
     private projectService: ProjectService,
     private userService: UserService, // Add constructor
     private fb: FormBuilder,
@@ -104,7 +105,7 @@ export class ManageProjectsComponent implements OnInit {
         file: this.projects.find(p => p.projectId === projectId)?.file || '',
         paid
       };
-      this.projectService.addProjectToUser(this.userId!, updatedProject).subscribe(() => {
+      this.projectService.updateProject(this.userId!, updatedProject).subscribe(() => {
         this.notification.success('Success', 'Project updated successfully');
         const index = this.projects.findIndex(p => p.projectId === projectId);
         if (index !== -1) {
@@ -143,5 +144,9 @@ export class ManageProjectsComponent implements OnInit {
 
   handleCancelEdit() {
     this.isEditModalVisible = false;
+  }
+
+  navigateBack() {
+    this.router.navigate(['/admin']);
   }
 }

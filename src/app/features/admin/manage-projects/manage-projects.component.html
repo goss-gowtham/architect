@@ -1,4 +1,8 @@
 <div class="manage-projects-container">
+  <button nz-button nzType="default" (click)="navigateBack()">
+    <nz-icon nzType="arrow-left" nzTheme="outline"></nz-icon>
+    Users
+  </button>
   <nz-card [nzHoverable]="false" [nzBordered]="false">
     <div *ngIf="user" class="user-details">
       <nz-descriptions nzTitle="Managing Projects" nzBordered="false">
@@ -9,8 +13,8 @@
     </div>
     <nz-tabset>
       <nz-tab nzTitle="Manage Projects">
-        <div *ngIf="projects.length > 0" class="projects-list">
-          <nz-table #basicTable [nzData]="projects" [nzBordered]="true">
+        <div *ngIf="projects.length > 0" class="projects-list user-list-section">
+          <nz-table #basicTable [nzData]="projects" [nzBordered]="true" [nzPageSize]="1" [nzFrontPagination]="projects.length < 5">
             <thead>
               <tr>
                 <th nzWidth="20%">Project Name</th>

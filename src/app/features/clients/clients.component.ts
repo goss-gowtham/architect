@@ -36,17 +36,11 @@ export class ClientsComponent implements OnInit {
       this.isAdminOrMaster = currentUser.roles.includes(Roles.admin) || currentUser.roles.includes(Roles.master);
       this.dbService.getClientLogo(currentUser.client).subscribe((logoUrl: string) => {
         this.clientLogo = logoUrl;
-        this.userService.getUsers(currentUser.client).subscribe((users: User[]) => { 
-          if (users) {
-            this.cards = users.flatMap((user) => user.projects.map(project => ({
-              ...project,
-              thumbnail: this.clientLogo,
-              username: user.username
-            })));
-          }
-        }, (error) => {
-          console.error("Error fetching user projects:", error);
-        });
+        if (this.isAdminOrMaster) {
+          this.loadAllUserProjects(currentUser.client);
+        } else {
+          this.loadCurrentUserProjects(currentUser.id);
+        }
       }, (error) => {
         console.error("Error fetching client logo:", error);
       });
@@ -66,6 +60,34 @@ export class ClientsComponent implements OnInit {
       } else if (paymentStatus === 'failure') {
         this.notification.error('Error', 'Payment failed. Please try again.');
       }
+    });
+  }
+
+  loadAllUserProjects(clientId: string) {
+    this.userService.getUsers(clientId).subscribe((users: User[]) => {
+      if (users) {
+        this.cards = users.flatMap((user) => user.projects.map(project => ({
+          ...project,
+          thumbnail: this.clientLogo,
+          username: user.username
+        })));
+      }
+    }, (error) => {
+      console.error("Error fetching user projects:", error);
+    });
+  }
+
+  loadCurrentUserProjects(userId: string) {
+    this.userService.getUser(userId).subscribe((user) => {
+      if (user) {
+        this.cards = user.projects.map(project => ({
+          ...project,
+          thumbnail: this.clientLogo,
+          username: user.username
+        }));
+      }
+    }, (error) => {
+      console.error("Error fetching user projects:", error);
     });
   }
 

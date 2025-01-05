@@ -60,6 +60,28 @@ export class ProjectService {
         }));
     }
 
+    updateProject(userId: string, project: CardDTO): Observable<void> {
+        if (!userId) throw new Error("User ID cannot be null");
+        const dbRef = ref(this.database, `users/${userId}/projects`);
+        return from(get(dbRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const projects = snapshot.val();
+                const updatedProjects = projects.map((p: any) => {
+                    if (p.projectId === project.projectId) {
+                        return project;
+                    }
+                    return p;
+                });
+                return update(ref(this.database, `users/${userId}`), { projects: updatedProjects });
+            } else {
+                throw new Error("No projects found for the user");
+            }
+        }).catch((error) => {
+            console.error("Error updating project:", error);
+            throw error;
+        }));
+    }
+
     updateProjectPaymentStatus(userId: string, projectId: string, paid: boolean): Observable<void> {
         if (!userId) throw new Error("User ID cannot be null");
         const dbRef = ref(this.database, `users/${userId}/projects`);

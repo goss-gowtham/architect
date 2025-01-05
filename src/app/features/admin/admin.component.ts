@@ -131,6 +131,11 @@ export class AdminComponent implements OnInit {
   }
 
   deleteUser(userId: string) {
+    const currentUser = this.authService.currentUserValue;
+    if (currentUser?.id === userId) {
+      this.notification.error('Error', 'You cannot delete your own user data');
+      return;
+    }
     this.modal.confirm({
       nzTitle: "Action can't be undone",
       nzContent: 'Are you sure to remove this user and their associated projects?',
