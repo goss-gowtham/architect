@@ -16,7 +16,8 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
-import { NzModalModule } from 'ng-zorro-antd/modal'; // Add this line
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzUploadModule } from 'ng-zorro-antd/upload'; // Add this line
 
 @NgModule({
   declarations: [AdminComponent, ManageProjectsComponent],
@@ -36,7 +37,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal'; // Add this line
     NzDescriptionsModule,
     NzFormModule,
     NzSwitchModule,
-    NzModalModule // Add this line
+    NzModalModule,
+    NzUploadModule
   ],
   providers: [NzNotificationService]
 })
