@@ -51,7 +51,7 @@ export class ClientsComponent implements OnInit {
       const projectId = params['projectId'];
       const userId = params['userId'];
       if (paymentStatus === 'success' && projectId && userId) {
-        this.projectService.updateProjectPaymentStatus(userId, projectId, true).subscribe(() => { // Update method
+        this.projectService.updateProjectPaymentStatus(userId, projectId, true).subscribe(() => {
           this.notification.success('Success', 'Payment successful. You can now download the file.');
           this.downloadFile(this.cards.find(card => card.projectId === projectId)?.file || '');
         }, (error: any) => {
@@ -104,12 +104,12 @@ export class ClientsComponent implements OnInit {
       this.notification.success('Success', 'Downloaded successfully');
     } else {
       this.paymentService.initiatePayUPayment(card).subscribe({
+        next: () => {
+          console.log("Payment initiation complete");
+        },
         error: (err) => {
           console.error("Error initiating payment:", err);
           this.notification.error('Error', 'Error initiating payment. Please try again.');
-        },
-        complete: () => {
-          console.log("Payment initiation complete");
         }
       });
     }

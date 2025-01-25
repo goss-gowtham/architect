@@ -2,6 +2,7 @@ import { CommonModule, registerLocaleData } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -56,7 +57,8 @@ registerLocaleData(en);
     NzGridModule,
     NzTypographyModule,
     NzFlexModule,
-    NzDividerModule
+    NzDividerModule,
+    HttpClientModule
   ],
   bootstrap: [AppComponent],
   providers: [
