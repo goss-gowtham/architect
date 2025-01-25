@@ -1,31 +1,31 @@
-<div nz-row [nzGutter]="[48,24]">
-    <div *ngIf="cards.length === 0" class="no-projects-message">
-        <p>No projects available. Request for a project to pay and download.</p>
-    </div>
-    <div *ngFor="let card of cards" nz-col="24" nzXs="24" nzSm="24" nzMd="12" nzLg="6" nzXl="6">
-        <nz-card class="card-shadow" style="width: 280px; height: 320px" [nzCover]="coverTemplate" [nzActions]="[payDownload]">
-            <nz-card-meta
-              [nzTitle]="card.project"
-              [nzDescription]="card.desc"
-            ></nz-card-meta>
-        </nz-card>
-        <ng-template #coverTemplate>
-            <div style="position: relative;">
-                <img *ngIf="card?.thumbnail; else placeholder" [alt]="card.project" width="280px" style="min-height:150px; max-height: 200px;" [src]="card?.thumbnail" />
-                <ng-template #placeholder>
-                    <div style="width: 280px; height: 170px; background-color: #f0f0f0;"></div>
-                </ng-template>
-                <nz-tag nzColor="success" style="position: absolute; top: 5px; right: 0px;">INR {{card.pay}}</nz-tag>
-                <nz-tag *ngIf="isAdminOrMaster" nzColor="processing" style="position: absolute; bottom: 5px; right: 0px;">{{card.username}}</nz-tag>
-            </div>
+<div nz-row [nzGutter]="[16, 16]" class="clients-container">
+  <div *ngIf="cards.length === 0" class="no-projects-message">
+    <p>No projects available. Request for a project to pay and download.</p>
+  </div>
+  <div *ngFor="let card of cards" nz-col nzXs="24" nzSm="12" nzMd="8" nzLg="6" nzXl="6">
+    <nz-card class="card-shadow" [nzCover]="coverTemplate" [nzActions]="[payDownload]">
+      <nz-card-meta
+        [nzTitle]="card.project"
+        [nzDescription]="card.desc"
+      ></nz-card-meta>
+    </nz-card>
+    <ng-template #coverTemplate>
+      <div class="card-cover">
+        <img *ngIf="card?.thumbnail; else placeholder" [alt]="card.project" class="card-image" [src]="card?.thumbnail" />
+        <ng-template #placeholder>
+          <div class="card-placeholder"></div>
         </ng-template>
-        <ng-template #payDownload>
-            <button *ngIf="card.paid || isAdminOrMaster" nz-button nzType="default" nzShape="round" (click)="handlePayAndDownload(card)">
-                <nz-icon nzType="download" />Download
-            </button>
-            <button *ngIf="!card.paid && !isAdminOrMaster" nz-button nzType="default" nzShape="round" (click)="handlePayAndDownload(card)">
-                <nz-icon nzType="credit-card" />Pay & Download
-            </button>
-        </ng-template>
-    </div>
+        <nz-tag nzColor="success" class="card-tag">INR {{card.pay}}</nz-tag>
+        <nz-tag *ngIf="isAdminOrMaster" nzColor="processing" class="card-username">{{card.username}}</nz-tag>
+      </div>
+    </ng-template>
+    <ng-template #payDownload>
+      <button *ngIf="card.paid || isAdminOrMaster" nz-button nzType="default" nzShape="round" (click)="handlePayAndDownload(card)">
+        <nz-icon nzType="download"></nz-icon>Download
+      </button>
+      <button *ngIf="!card.paid && !isAdminOrMaster" nz-button nzType="default" nzShape="round" (click)="handlePayAndDownload(card)">
+        <nz-icon nzType="credit-card"></nz-icon>Pay & Download
+      </button>
+    </ng-template>
+  </div>
 </div>

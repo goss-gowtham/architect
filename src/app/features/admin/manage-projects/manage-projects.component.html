@@ -9,6 +9,8 @@
         <nz-descriptions-item nzTitle="Username">{{ user.username }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Roles">{{ user.roles.join(', ') }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Client">{{ user.client }}</nz-descriptions-item>
+        <nz-descriptions-item *ngIf="user.phone" nzTitle="Phone">{{ user.phone }}</nz-descriptions-item>
+        <nz-descriptions-item *ngIf="user.email" nzTitle="Email">{{ user.email }}</nz-descriptions-item>
       </nz-descriptions>
     </div>
     <nz-tabset>

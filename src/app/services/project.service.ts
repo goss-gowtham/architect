@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ref, get, update } from "firebase/database";
 import { ref as storageRef, deleteObject } from "firebase/storage";
 import { from, Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CardDTO } from '../models/clients.dto';
 import { FirebaseService } from './firebase.service';
 
@@ -12,7 +13,7 @@ export class ProjectService {
     private database;
     private storage;
 
-    constructor(private firebaseService: FirebaseService) {
+    constructor(private firebaseService: FirebaseService, private http: HttpClient) {
         this.database = this.firebaseService.getDatabase();
         this.storage = this.firebaseService.getStorage();
     }
@@ -102,5 +103,14 @@ export class ProjectService {
             console.error("Error updating project payment status:", error);
             throw error;
         }));
+    }
+
+    downloadFile(fileUrl: string): Observable<Blob> {
+        const headers = new HttpHeaders({
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET',
+            'Access-Control-Allow-Headers': 'Content-Type'
+        });
+        return this.http.get(fileUrl, { headers, responseType: 'blob' });
     }
 }

@@ -9,9 +9,14 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { ReactiveFormsModule } from '@angular/forms';
+import { UserDetailsFormComponent } from '../../components/user-details-form/user-details-form.component';
+import { NzFormModule } from 'ng-zorro-antd/form'; // Add import
+import { HttpClientModule } from '@angular/common/http'; // Add import
 
 @NgModule({
-  declarations: [ClientsComponent],
+  declarations: [ClientsComponent, UserDetailsFormComponent],
   imports: [
     CommonModule,
     ClientsRoutingModule,
@@ -21,7 +26,11 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
     NzTagModule,
     NzGridModule,
     NzFlexModule,
-    NzEmptyModule
+    NzEmptyModule,
+    NzModalModule,
+    ReactiveFormsModule,
+    NzFormModule, // Add NzFormModule
+    HttpClientModule // Add HttpClientModule
   ]
 })
 export class ClientsModule { }

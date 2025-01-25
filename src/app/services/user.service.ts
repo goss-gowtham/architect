@@ -128,4 +128,13 @@ export class UserService {
             throw error;
         }));
     }
+
+    updateUser(user: User): Observable<void> {
+        return from(set(ref(this.database, 'users/' + user.id), user).then(() => {
+            console.log("User updated successfully");
+        }).catch((error) => {
+            console.error("Error updating user:", error);
+            throw error;
+        }));
+    }
 }

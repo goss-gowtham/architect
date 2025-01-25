@@ -1,0 +1,28 @@
+// Add any custom styles for the user details form component here
+
+form {
+  padding: 16px;
+}
+
+[nz-form-item] {
+  margin-bottom: 16px;
+}
+
+[nz-form-label] {
+  text-align: left;
+}
+
+[nz-form-control] {
+  width: 100%;
+}
+
+input[nz-input] {
+  width: 100%;
+}
+
+.info-message {
+  padding: 16px;
+  font-size: 14px;
+  color: #888;
+  text-align: center;
+}

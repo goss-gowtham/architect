@@ -7,6 +7,8 @@ export interface User {
   roles: string[];
   client: string;
   projects: CardDTO[];
+  email?: string;
+  phone?: string;
 }
 
 export enum Roles {

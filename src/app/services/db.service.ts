@@ -31,6 +31,14 @@ export class DbService {
         }));
     }
 
+    setData(path: string, data: any): Observable<void> {
+        const dbRef = ref(this.database, path);
+        return from(set(dbRef, data).catch((error: any) => {
+            console.error("Error setting data:", error);
+            throw error;
+        }));
+    }
+
     getClients(): Observable<any> {
         return this.getData('clients');
     }
