@@ -39,7 +39,8 @@ export class ManageProjectsComponent implements OnInit {
       desc: ['', Validators.required],
       pay: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       thumbnail: [''],
-      paid: [false]
+      paid: [false],
+      thumbnailFile: [null]
     });
 
     this.addProjectForm = this.fb.group({
@@ -96,30 +97,49 @@ export class ManageProjectsComponent implements OnInit {
   }
 
   editProject() {
-    const { projectId, project, desc, pay, thumbnail, paid } = this.editProjectForm.value;
+    const { projectId, project, desc, pay, paid } = this.editProjectForm.value;
+    const thumbnailFile = this.editProjectForm.get('thumbnailFile')?.value;
     if (this.userId && this.editProjectForm.valid) {
-      const updatedProject: CardDTO = {
-        projectId,
-        project,
-        desc,
-        pay,
-        thumbnail,
-        file: this.projects.find(p => p.projectId === projectId)?.file || '',
-        paid
-      };
-      this.projectService.updateProject(this.userId!, updatedProject).subscribe(() => {
-        this.notification.success('Success', 'Project updated successfully');
-        const index = this.projects.findIndex(p => p.projectId === projectId);
-        if (index !== -1) {
-          this.projects[index] = updatedProject;
+        const updateProjectData = (thumbnailUrl: string) => {
+            const updatedProject: CardDTO = {
+                projectId,
+                project,
+                desc,
+                pay,
+                thumbnail: thumbnailUrl,
+                file: this.projects.find(p => p.projectId === projectId)?.file || '',
+                paid
+            };
+            this.projectService.updateProject(this.userId!, updatedProject).subscribe(() => {
+                this.notification.success('Success', 'Project updated successfully');
+                const index = this.projects.findIndex(p => p.projectId === projectId);
+                if (index !== -1) {
+                    this.projects[index] = updatedProject;
+                }
+                this.editProjectForm.reset();
+                this.isEditModalVisible = false;
+            }, (error) => {
+                console.error("Error updating project:", error);
+            });
+        };
+
+        if (thumbnailFile) {
+            const filePath = `thumbnails/${this.userId}/${uuidv4()}_${thumbnailFile.name}`;
+            this.dbService.uploadFile(thumbnailFile, filePath).subscribe((thumbnailUrl) => {
+                updateProjectData(thumbnailUrl);
+            }, (error) => {
+                console.error("Error uploading thumbnail:", error);
+            });
+        } else {
+            updateProjectData(this.editProjectForm.get('thumbnail')?.value || '');
         }
-        this.editProjectForm.reset();
-        this.isEditModalVisible = false;
-      }, (error) => {
-        console.error("Error updating project:", error);
-      });
     }
-  }
+}
+
+onThumbnailFileChange(event: any) {
+    const file = event.target.files[0];
+    this.editProjectForm.patchValue({ thumbnailFile: file });
+}
 
   deleteProject(projectId: string) {
     if (this.userId) {

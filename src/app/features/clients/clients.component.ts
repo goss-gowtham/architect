@@ -77,7 +77,7 @@ export class ClientsComponent implements OnInit {
         if (users) {
           this.cards = users.flatMap((user) => user.projects.map(project => ({
             ...project,
-            thumbnail: this.clientLogo,
+            thumbnail: project.thumbnail || this.clientLogo,
             username: user.username
           })));
         }
@@ -95,7 +95,7 @@ export class ClientsComponent implements OnInit {
         if (user) {
           this.cards = user.projects.map(project => ({
             ...project,
-            thumbnail: this.clientLogo,
+            thumbnail: project.thumbnail || this.clientLogo,
             username: user.username
           }));
         }
