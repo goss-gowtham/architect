@@ -21,7 +21,7 @@ export class PaymentService {
     const baseUrl = this.testMode ? 'https://test.payu.in/_payment' : 'https://secure.payu.in/_payment';
     const transactionId = uuidv4(); // Generate a unique transaction ID
     const refererUrl = window.location.origin;
-    const successUrl = `https://us-central1-architect-design-7.cloudfunctions.net/updatePaidProjects?userId=${user.id}&projectId=${card.projectId}&referer=${encodeURIComponent(refererUrl)}`;
+    const successUrl = `https://us-central1-architect-design-7.cloudfunctions.net/updatePaidProjects?userId=${user.id}&projectId=${card.projectId}&tranId=${transactionId}&referer=${encodeURIComponent(refererUrl)}`;
     const failureUrl = `${window.location.origin}/architect/clients?status=failure`;
     const hashString = `${this.key}|${transactionId}|${card.pay}|${card.project}|${card.username}|${user.email}|||||||||||${this.salt}`;
 

@@ -6,6 +6,7 @@ admin.initializeApp();
 export const updatePaidProjects = functions.https.onRequest(async (req, res): Promise<void> => {
     const userId = req.query.userId as string;
     const projectId = req.query.projectId as string;
+    const tranId = req.query.tranId as string;
     const referer = req.query.referer as string || req.get('referer'); // Prioritize the custom referer URL
 
     if (!userId || !projectId || !referer) {
@@ -22,6 +23,7 @@ export const updatePaidProjects = functions.https.onRequest(async (req, res): Pr
             const projectIndex = userData.projects.findIndex((project: any) => project.projectId === projectId);
             if (projectIndex !== -1) {
                 userData.projects[projectIndex].paid = true;
+                userData.projects[projectIndex].tranId = tranId;
                 await userRef.update({ projects: userData.projects });
                 const redirectUrl = `${referer}/architect/clients?status=success&projectId=${projectId}&userId=${userId}`;
                 res.redirect(302, redirectUrl);

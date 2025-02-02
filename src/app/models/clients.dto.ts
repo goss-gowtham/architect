@@ -7,4 +7,5 @@ export interface CardDTO {
   file: string;
   username?: string;
   paid?: boolean;
+  tranId?: string;
 }

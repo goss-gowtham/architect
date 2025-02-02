@@ -10,7 +10,7 @@
         </ng-template>
         <div *ngIf="filteredUserData.length > 0">
           <div class="table-responsive">
-            <nz-table #basicTable [nzData]="filteredUserData" [nzBordered]="true">
+            <nz-table #basicTable [nzData]="filteredUserData" [nzBordered]="true" [nzFrontPagination]="false">
               <thead>
                 <tr>
                   <th nzWidth="40%">Username</th>

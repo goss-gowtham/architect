@@ -9,10 +9,12 @@ import { CardDTO } from '../../../models/clients.dto';
 import { User } from '../../../models/user.dto';
 import { ProjectService } from '../../../services/project.service';
 import { UserService } from '../../../services/user.service'; 
+import {ClipboardModule} from '@angular/cdk/clipboard';
 
 @Component({
   selector: 'app-manage-projects',
   templateUrl: './manage-projects.component.html',
+  styleUrl: './manage-projects.component.scss',
   standalone: false
 })
 export class ManageProjectsComponent implements OnInit {
