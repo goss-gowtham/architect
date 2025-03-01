@@ -75,11 +75,13 @@ export class ClientsComponent implements OnInit {
     return this.userService.getUsers(clientId).pipe(
       map((users: User[]) => {
         if (users) {
-          this.cards = users.flatMap((user) => user.projects.map(project => ({
-            ...project,
-            thumbnail: project.thumbnail || this.clientLogo,
-            username: user.username
-          })));
+          this.cards = users.flatMap((user) => 
+            user.projects ? user.projects.map(project => ({
+              ...project,
+              thumbnail: project.thumbnail || this.clientLogo,
+              username: user.username
+            })) : []
+          );
         }
       }),
       catchError((error) => {

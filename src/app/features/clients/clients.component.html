@@ -1,12 +1,14 @@
 <div nz-row [nzGutter]="[16, 16]" class="clients-container">
   <div *ngIf="cards.length === 0" class="no-projects-message">
+      <img height="200px" src="assets\draw\undraw_urban-design_tz8n.svg" alt="Fingerprint SVG" class="svg-image"/>
     <p>No projects available. Request for a project to pay and download.</p>
   </div>
   <div *ngFor="let card of cards" nz-col nzXs="24" nzSm="12" nzMd="8" nzLg="6" nzXl="6">
-    <nz-card class="card-shadow" [nzCover]="coverTemplate" [nzActions]="[payDownload]">
+    <nz-card class="card-shadow modern-card" [nzCover]="coverTemplate" [nzActions]="[payDownload]">
       <nz-card-meta
         [nzTitle]="card.project"
         [nzDescription]="card.desc"
+        class="card-meta"
       ></nz-card-meta>
     </nz-card>
     <ng-template #coverTemplate>
@@ -17,6 +19,7 @@
         </ng-template>
         <nz-tag nzColor="success" class="card-tag">INR {{card.pay}}</nz-tag>
         <nz-tag *ngIf="isAdminOrMaster" nzColor="processing" class="card-username">{{card.username}}</nz-tag>
+        <div *ngIf="card.paid" class="payment-chip">{{card.tranId ? 'Online' : 'Cash'}}</div>
       </div>
     </ng-template>
     <ng-template #payDownload>

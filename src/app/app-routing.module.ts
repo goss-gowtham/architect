@@ -11,7 +11,7 @@ const routes: Routes = [
     data: { roles: ['admin'] }
   },
   {
-    path: 'clients',
+    path: 'dashboard',
     loadChildren: () => import('../app/features/clients/clients.module').then(m => m.ClientsModule),
     canActivate: [AuthGuard], 
     data: { roles: ['admin', 'user'] }

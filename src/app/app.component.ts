@@ -18,18 +18,16 @@ export class AppComponent implements OnInit {
     this.authService.currentUser.subscribe(user => {
       this.isLoggedIn = !!user;
       this.currentUser = user;
+      this.updatePageTitle(); // Update the page title when the current user changes
     });
   }
 
   ngOnInit() {
-    const user = this.authService.currentUserValue;
-    if (user) {
-      this.pageTitle = user.client;
-    }
+    this.updatePageTitle(); // Update the page title on initialization
   }
 
   isAccessPage(): boolean {
-    return this.router.url === '/access';
+    return !this.isLoggedIn && this.router.url === '/access';
   }
 
   logout(): void {
@@ -39,5 +37,14 @@ export class AppComponent implements OnInit {
 
   userHasRole(role: string): boolean {
     return this.currentUser && this.currentUser.roles && this.currentUser.roles.includes(role);
+  }
+
+  // Add this method to update the page title
+  private updatePageTitle(): void {
+    if (this.currentUser) {
+      this.pageTitle = this.currentUser.client || "Architect Design";
+    } else {
+      this.pageTitle = "Architect Design";
+    }
   }
 }

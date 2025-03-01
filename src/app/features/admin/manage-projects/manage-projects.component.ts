@@ -6,9 +6,10 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { DbService } from 'src/app/services/db.service';
 import { v4 as uuidv4 } from 'uuid';
 import { CardDTO } from '../../../models/clients.dto';
-import { User } from '../../../models/user.dto';
+import { User, Roles } from '../../../models/user.dto'; // Ensure Roles is imported
 import { ProjectService } from '../../../services/project.service';
 import { UserService } from '../../../services/user.service'; 
+import { AuthService } from '../../../services/auth.service'; // Ensure AuthService is imported
 import {ClipboardModule} from '@angular/cdk/clipboard';
 
 @Component({
@@ -24,6 +25,11 @@ export class ManageProjectsComponent implements OnInit {
   editProjectForm: FormGroup;
   addProjectForm: FormGroup;
   isEditModalVisible = false;
+  originalProject: CardDTO | null = null; // Add this variable to store the original project
+  showResetPassword = false; // Add this variable to control the visibility of the password input field
+  newPassword: string = ''; // Add this variable to store the new password
+  isMaster: boolean = false; // Add this variable to check for master entitlement
+  isAdmin: boolean = false; // Add this variable to check for admin entitlement
 
   constructor(
     private route: ActivatedRoute,
@@ -33,7 +39,8 @@ export class ManageProjectsComponent implements OnInit {
     private fb: FormBuilder,
     private notification: NzNotificationService,
     private dbService: DbService,
-    private modal: NzModalService
+    private modal: NzModalService,
+    private authService: AuthService // Add AuthService to constructor
   ) {
     this.editProjectForm = this.fb.group({
       projectId: ['', Validators.required],
@@ -63,10 +70,26 @@ export class ManageProjectsComponent implements OnInit {
         });
       }
     });
+    const currentUser = this.authService.currentUserValue;
+    if (currentUser) {
+      this.isMaster = currentUser.roles.includes(Roles.master);
+      this.isAdmin = currentUser.roles.includes(Roles.admin);
+    }
   }
 
   onProjectFileChange(event: any) {
     const file = event.target.files[0];
+    if (file.size > 50 * 1024 * 1024) {
+      this.notification.error('Error', 'File size exceeds 50MB');
+      event.target.value = null; // Reset the file input
+      return;
+    }
+    const acceptedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+    if (!acceptedTypes.includes(file.type)) {
+      this.notification.error('Error', 'Invalid file type. Only PDF and image files are accepted.');
+      event.target.value = null; // Reset the file input
+      return;
+    }
     this.addProjectForm.patchValue({ file });
   }
 
@@ -98,7 +121,27 @@ export class ManageProjectsComponent implements OnInit {
     }
   }
 
+  // Add this method to check if the form values have changed
+  hasFormChanged(): boolean {
+    if (!this.originalProject) return false;
+    const { projectId, project, desc, pay, paid } = this.editProjectForm.value;
+    return (
+      projectId !== this.originalProject.projectId ||
+      project !== this.originalProject.project ||
+      desc !== this.originalProject.desc ||
+      pay !== this.originalProject.pay ||
+      paid !== this.originalProject.paid ||
+      this.editProjectForm.get('thumbnailFile')?.value !== null
+    );
+  }
+
+  // Update the editProject method to check if the form values have changed
   editProject() {
+    if (!this.hasFormChanged()) {
+      this.isEditModalVisible = false;
+      return;
+    }
+
     const { projectId, project, desc, pay, paid } = this.editProjectForm.value;
     const thumbnailFile = this.editProjectForm.get('thumbnailFile')?.value;
     if (this.userId && this.editProjectForm.valid) {
@@ -136,21 +179,49 @@ export class ManageProjectsComponent implements OnInit {
             updateProjectData(this.editProjectForm.get('thumbnail')?.value || '');
         }
     }
-}
+  }
 
-onThumbnailFileChange(event: any) {
+  // Add this method to handle the "Cash" button click event
+  markAsPaid() {
+    if (this.isAdmin) {
+      this.editProjectForm.patchValue({ paid: true });
+    } else {
+      this.notification.error('Error', 'Only users with admin entitlement can mark as paid.');
+    }
+  }
+
+  markAsUnpaid() {
+    if (this.isMaster) {
+      this.editProjectForm.patchValue({ paid: false });
+    } else {
+      this.notification.error('Error', 'Only users with master entitlement can mark as unpaid.');
+    }
+  }
+
+  onThumbnailFileChange(event: any) {
     const file = event.target.files[0];
+    if (file.size > 2 * 1024 * 1024) {
+      this.notification.error('Error', 'Thumbnail size exceeds 2MB');
+      event.target.value = null; // Reset the file input
+      return;
+    }
+    const acceptedTypes = ['image/jpeg', 'image/png'];
+    if (!acceptedTypes.includes(file.type)) {
+      this.notification.error('Error', 'Invalid file type. Only image files (JPEG, PNG) are accepted.');
+      event.target.value = null; // Reset the file input
+      return;
+    }
     this.editProjectForm.patchValue({ thumbnailFile: file });
-}
+  }
 
   deleteProject(projectId: string) {
     if (this.userId) {
       this.modal.confirm({
         nzTitle: "Action can't be undone",
-        nzContent: 'Are you sure to remove this project and its associated file?',
+        nzContent: 'Are you sure to remove this asset and its associated files?',
         nzOnOk: () => {
           this.projectService.deleteProject(this.userId!, projectId).subscribe(() => {
-            this.notification.success('Success', 'Project and its associated file removed successfully');
+            this.notification.success('Success', 'Asset and its associated files removed successfully');
             this.projects = this.projects.filter(p => p.projectId !== projectId);
           }, (error: any) => {
             this.notification.error('Error', 'Error deleting project');
@@ -161,9 +232,29 @@ onThumbnailFileChange(event: any) {
     }
   }
 
+  // Update the selectProjectForEdit method to store the original project
   selectProjectForEdit(project: CardDTO) {
     this.editProjectForm.patchValue(project);
+    this.originalProject = { ...project }; // Store the original project
     this.isEditModalVisible = true;
+  }
+
+  // Add this method to toggle the visibility of the password input field
+  toggleResetPassword() {
+    this.showResetPassword = !this.showResetPassword;
+  }
+
+  // Add this method to handle the password reset
+  resetPassword() {
+    if (this.newPassword && this.userId) {
+      this.userService.updateUserPassword(this.userId, this.newPassword).subscribe(() => {
+        this.notification.success('Success', 'Password updated successfully');
+        this.showResetPassword = false;
+        this.newPassword = '';
+      }, (error) => {
+        console.error("Error updating password:", error);
+      });
+    }
   }
 
   handleCancelEdit() {

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NzTabSetComponent } from 'ng-zorro-antd/tabs';
+import { NzTabSetComponent, NzTabChangeEvent } from 'ng-zorro-antd/tabs'; // Add import
 import { UserService } from '../../services/user.service';
 import { DbService } from '../../services/db.service';
 import { AuthService } from '../../services/auth.service';
@@ -128,20 +128,21 @@ export class AdminComponent implements OnInit {
     }, (error) => {
       console.error("Error fetching users:", error);
     });
+    console.log(currentUser, this.userData);
   }
 
   deleteUser(userId: string) {
     const currentUser = this.authService.currentUserValue;
     if (currentUser?.id === userId) {
-      this.notification.error('Error', 'You cannot delete your own user data');
+      this.notification.error('Error', 'You cannot delete your own data');
       return;
     }
     this.modal.confirm({
       nzTitle: "Action can't be undone",
-      nzContent: 'Are you sure to remove this user and their associated projects?',
+      nzContent: 'Are you sure to remove this client and their associated assets?',
       nzOnOk: () => {
         this.userService.deleteUser(userId).subscribe(() => {
-          this.notification.success('Success', 'User and their associated projects removed successfully');
+          this.notification.success('Success', 'User and their associated assets removed successfully');
           this.getAllUsers();
         }, (error) => {
           this.notification.error('Error', 'Error deleting user');

@@ -1,4 +1,7 @@
-<div nz-row nzJustify="center">
+<div nz-row class="d-flex ant-flex-justify-center ant-flex-align-center">
+    <div nz-col  nzXs="24" nzSm="24" nzMd="8" nzXl="10">
+        <img height="200px" src="assets/draw/undraw_fingerprint_kdwq.svg" alt="Fingerprint SVG" class="svg-image"/>
+    </div>
     <div nz-col nzXs="24" nzSm="24" nzMd="24" nzXl="12">
         <ng-container *ngIf="!isLoggedIn; else loggedInTemplate">
             <nz-card nzTitle="Access" [nzHoverable]="true" [nzActions]="[loginButton]">

@@ -13,7 +13,7 @@ export class UserService {
     private database;
     private storage; // Add storage
 
-    constructor(private cryptoService: CryptoService, private firebaseService: FirebaseService) {
+    constructor(private cryptoService: CryptoService, private firebaseService: FirebaseService) { // Remove HttpClient
         this.database = this.firebaseService.getDatabase();
         this.storage = this.firebaseService.getStorage(); // Initialize storage
     }
@@ -135,6 +135,18 @@ export class UserService {
         }).catch((error) => {
             console.error("Error updating user:", error);
             throw error;
+        }));
+    }
+
+    // Update this method to use Firebase for updating the user's password
+    updateUserPassword(userId: string, newPassword: string): Observable<void> {
+        return from(this.cryptoService.hashPassword(newPassword).then((hashedPassword: string) => {
+            return set(ref(this.database, 'users/' + userId + '/password'), hashedPassword).then(() => {
+                console.log("Password updated successfully");
+            }).catch((error) => {
+                console.error("Error updating password:", error);
+                throw error;
+            });
         }));
     }
 }

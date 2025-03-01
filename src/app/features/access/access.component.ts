@@ -36,7 +36,7 @@ export class AccessComponent {
             if (user?.roles.includes('admin') || user?.roles.includes('master')) {
               this.router.navigate(['/admin']);
             } else if (user?.roles.includes('user') || user?.roles.includes('master')) {
-              this.router.navigate(['/clients']);
+              this.router.navigate(['/dashboard']);
             }
           });
           this.loginError = false;

@@ -18,6 +18,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzUploadModule } from 'ng-zorro-antd/upload'; // Add this line
+import { NzSpaceModule } from 'ng-zorro-antd/space';
 
 @NgModule({
   declarations: [AdminComponent, ManageProjectsComponent],
@@ -38,7 +39,8 @@ import { NzUploadModule } from 'ng-zorro-antd/upload'; // Add this line
     NzFormModule,
     NzSwitchModule,
     NzModalModule,
-    NzUploadModule
+    NzUploadModule,
+    NzSpaceModule
   ],
   providers: [NzNotificationService]
 })

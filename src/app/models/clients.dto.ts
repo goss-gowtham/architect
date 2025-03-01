@@ -8,4 +8,5 @@ export interface CardDTO {
   username?: string;
   paid?: boolean;
   tranId?: string;
+  paymentMethod?: string;
 }

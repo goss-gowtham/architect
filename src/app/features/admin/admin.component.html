@@ -1,117 +1,124 @@
-<div class="admin-container">
-  <nz-tabset #tabset>
-    <nz-tab nzTitle="Manage Users">
-      <div class="user-list-section">
-        <nz-input-group [nzSuffix]="suffixIconSearch">
-          <input type="text" nz-input placeholder="Search users" [(ngModel)]="searchValue" (input)="searchUsers()" />
-        </nz-input-group>
-        <ng-template #suffixIconSearch>
-          <nz-icon nzType="search"></nz-icon>
-        </ng-template>
-        <div *ngIf="filteredUserData.length > 0">
-          <div class="table-responsive">
-            <nz-table #basicTable [nzData]="filteredUserData" [nzBordered]="true" [nzFrontPagination]="false">
-              <thead>
-                <tr>
-                  <th nzWidth="40%">Username</th>
-                  <th nzWidth="30%">Roles</th>
-                  <th *ngIf="isMaster" nzWidth="25%">Client</th>
-                  <th nzWidth="30%">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let user of filteredUserData">
-                  <td><a routerLink="/clients"> {{ user.username }}</a></td>
-                  <td>{{ user.roles.join(', ') }}</td>
-                  <td *ngIf="isMaster">{{ user.client }}</td>
-                  <td class="button-flex">
-                    <button nz-button nzType="default" nzShape="round" (click)="navigateToManageProjects(user.id)">
-                      <nz-icon *ngIf="user?.projects && user.projects.length > 0" nzType="eye" nzTheme="outline"></nz-icon>
-                      <nz-icon *ngIf="!user.projects || user.projects.length === 0" nzType="plus" nzTheme="outline"></nz-icon>
-                      {{ user.projects && user.projects.length > 0 ? user.projects.length + ' Projects' : ' Project' }}
-                    </button>
-                    <button *ngIf="user.roles.indexOf('master') === -1" nz-button nzType="default" nzDanger
-                      (click)="deleteUser(user.id)" nzShape="round">
-                      <nz-icon nzType="delete" nzTheme="outline" />
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </nz-table>
+<div nz-row class="ant-flex-justify-center ant-flex-align-center">
+  <div class="admin-container" nz-col nzXs="24" nzSm="24" nzMd="24" nzXl="12">
+    <nz-tabset #tabset>
+      <nz-tab nzTitle="Manage Clients">
+        <div class="user-list-section">
+          <nz-input-group [nzSuffix]="suffixIconSearch">
+            <input type="text" nz-input placeholder="Search users" [(ngModel)]="searchValue" (input)="searchUsers()" />
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+            <nz-icon nzType="search"></nz-icon>
+          </ng-template>
+          <div *ngIf="filteredUserData.length > 0">
+            <div class="table-responsive">
+              <nz-table #basicTable [nzData]="filteredUserData" [nzBordered]="true" [nzFrontPagination]="false">
+                <thead>
+                  <tr>
+                    <th nzWidth="40%">Username</th>
+                    <th nzWidth="30%">Roles</th>
+                    <th *ngIf="isMaster" nzWidth="25%">Client</th>
+                    <th nzWidth="30%">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let user of filteredUserData">
+                    <td><a routerLink="/clients"> {{ user.username }}</a></td>
+                    <td>{{ user.roles.join(', ') }}</td>
+                    <td *ngIf="isMaster">{{ user.client }}</td>
+                    <td class="button-flex">
+                      <button nz-button nzType="default" nzShape="round" (click)="navigateToManageProjects(user.id)">
+                        <nz-icon *ngIf="user?.projects && user.projects.length > 0" nzType="eye" nzTheme="outline"></nz-icon>
+                        <nz-icon *ngIf="!user.projects || user.projects.length === 0" nzType="plus" nzTheme="outline"></nz-icon>
+                        {{ user.projects && user.projects.length > 0 ? user.projects.length + ' Assets' : ' Assets' }}
+                      </button>
+                      <button *ngIf="user.roles.indexOf('master') === -1" nz-button nzType="default" nzDanger
+                        (click)="deleteUser(user.id)" nzShape="round">
+                        <nz-icon nzType="delete" nzTheme="outline" />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </div>
+          </div>
+          <div *ngIf="filteredUserData.length === 0">
+            <p>No clients found.</p>
           </div>
         </div>
-        <div *ngIf="filteredUserData.length === 0">
-          <p>No users found.</p>
-        </div>
-      </div>
-    </nz-tab>
-    <nz-tab nzTitle="Add User">
-      <form [formGroup]="addUserForm" (ngSubmit)="addUser()" class="admin-form">
-        <div nz-row nzGutter="16">
-          <div nz-col nzXs="24" nzSm="24" nzMd="12">
-            <nz-form-item>
-              <nz-form-control class="w-100">
-                <nz-input-group nzPrefixIcon="user">
-                  <input formControlName="username" nz-input placeholder="Username" />
-                </nz-input-group>
-              </nz-form-control>
-            </nz-form-item>
+      </nz-tab>
+      <nz-tab nzTitle="Add Client">
+        <form [formGroup]="addUserForm" (ngSubmit)="addUser()" class="admin-form">
+          <div nz-row nzGutter="16">
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <nz-form-item>
+                <nz-form-control class="w-100">
+                  <nz-input-group nzPrefixIcon="user">
+                    <input formControlName="username" nz-input placeholder="Username" />
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <nz-form-item>
+                <nz-form-control class="w-100">
+                  <nz-input-group nzPrefixIcon="lock">
+                    <input formControlName="password" nz-input type="password" placeholder="Password" />
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
           </div>
-          <div nz-col nzXs="24" nzSm="24" nzMd="12">
-            <nz-form-item>
-              <nz-form-control class="w-100">
-                <nz-input-group nzPrefixIcon="lock">
-                  <input formControlName="password" nz-input type="password" placeholder="Password" />
-                </nz-input-group>
-              </nz-form-control>
-            </nz-form-item>
+          <div *ngIf="isMaster" nz-row nzGutter="16">
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <nz-form-item>
+                <nz-form-control class="w-100">
+                  <nz-select formControlName="userRoles" nzMode="multiple" nzPlaceHolder="Select roles">
+                    <nz-option *ngFor="let role of roles" [nzTitle]="role" [nzLabel]="role" [nzValue]="role"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div *ngIf="isMaster" nz-col nzXs="24" nzSm="24" nzMd="12">
+              <nz-form-item>
+                <nz-form-control class="w-100">
+                  <nz-select formControlName="client" nzPlaceHolder="Select Organization">
+                    <nz-option *ngFor="let client of clients" [nzTitle]="client" [nzLabel]="client" [nzValue]="client"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
           </div>
-        </div>
-        <div *ngIf="isMaster" nz-row nzGutter="16">
-          <div nz-col nzXs="24" nzSm="24" nzMd="12">
-            <nz-form-item>
-              <nz-form-control class="w-100">
-                <nz-select formControlName="userRoles" nzMode="multiple" nzPlaceHolder="Select roles">
-                  <nz-option *ngFor="let role of roles" [nzTitle]="role" [nzLabel]="role" [nzValue]="role"></nz-option>
-                </nz-select>
-              </nz-form-control>
-            </nz-form-item>
+          <button nz-button nzType="primary" [disabled]="addUserForm.invalid">Add Client</button>
+        </form>
+      </nz-tab>
+      <nz-tab *ngIf="isMaster" nzTitle="Add Organization">
+        <form [formGroup]="addClientForm" (ngSubmit)="addClient()" class="admin-form">
+          <div nz-row nzGutter="16">
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <nz-form-item>
+                <nz-form-control class="w-100">
+                  <nz-input-group nzPrefixIcon="team">
+                    <input formControlName="clientName" nz-input placeholder="Organization Name" />
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <nz-form-item>
+                <nz-form-control nzErrorTip="Please upload a logo!">
+                  <input type="file" (change)="onLogoFileChange($event)" class="w-100" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
           </div>
-          <div *ngIf="isMaster" nz-col nzXs="24" nzSm="24" nzMd="12">
-            <nz-form-item>
-              <nz-form-control class="w-100">
-                <nz-select formControlName="client" nzPlaceHolder="Select client">
-                  <nz-option *ngFor="let client of clients" [nzTitle]="client" [nzLabel]="client" [nzValue]="client"></nz-option>
-                </nz-select>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-        </div>
-        <button nz-button nzType="primary" [disabled]="addUserForm.invalid">Add User</button>
-      </form>
-    </nz-tab>
-    <nz-tab *ngIf="isMaster" nzTitle="Add Company">
-      <form [formGroup]="addClientForm" (ngSubmit)="addClient()" class="admin-form">
-        <div nz-row nzGutter="16">
-          <div nz-col nzXs="24" nzSm="24" nzMd="12">
-            <nz-form-item>
-              <nz-form-control class="w-100">
-                <nz-input-group nzPrefixIcon="team">
-                  <input formControlName="clientName" nz-input placeholder="Company Name" />
-                </nz-input-group>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-          <div nz-col nzXs="24" nzSm="24" nzMd="12">
-            <nz-form-item>
-              <nz-form-control nzErrorTip="Please upload a logo!">
-                <input type="file" (change)="onLogoFileChange($event)" class="w-100" />
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-        </div>
-        <button nz-button nzType="primary" [disabled]="addClientForm.invalid">Add Company</button>
-      </form>
-    </nz-tab>
-  </nz-tabset>
+          <button nz-button nzType="primary" [disabled]="addClientForm.invalid">Add Organization</button>
+        </form>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+  <div nz-col nzXs="24" nzSm="24" nzMd="12" nzXl="3">
+  </div>
+  <div nz-col nzXs="24" nzSm="24" nzMd="12" nzXl="6" class="ant-flex-justify-center ant-flex-align-center">
+      <img height="200px" src="assets/draw/undraw_real-time-collaboration_g4mc.svg" alt="Fingerprint SVG" class="svg-image"/>
+  </div>
 </div>

@@ -24,7 +24,7 @@
       (nzOnClose)="visible = false"
     >
       <ng-container nz-menu *nzDrawerContent>
-        <div nz-menu-item nzMatchRouter class="menu-item">
+        <div nz-menu-item nzMatchRouter *ngIf="!isLoggedIn" class="menu-item">
           <nz-icon nzType="dashboard" nzTheme="outline" />
           <a routerLink="/access" (click)="visible=false">Access</a>
         </div>
@@ -34,7 +34,7 @@
         </div>
         <div nz-menu-item nzMatchRouter *ngIf="userHasRole('user')" class="menu-item">
           <nz-icon nzType="appstore" nzTheme="outline" />
-          <a routerLink="/clients" (click)="visible=false">Clients</a>
+          <a routerLink="/dashboard" (click)="visible=false">Dashboard</a>
         </div>
       </ng-container>
     </nz-drawer>

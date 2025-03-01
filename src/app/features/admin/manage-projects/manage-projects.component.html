@@ -1,29 +1,38 @@
 <div class="projects-list">
   <button nz-button nzType="default" class="user-details" (click)="navigateBack()">
     <nz-icon nzType="arrow-left" nzTheme="outline"></nz-icon>
-    Users
+    Clients
   </button>
   <nz-card [nzHoverable]="false" [nzBordered]="false" class="padding-0">
     <div class="user-list-section">
       <div *ngIf="user">
-        <nz-descriptions nzTitle="Managing Projects" nzBordered="false">
+        <nz-descriptions nzTitle="Managing Assets" nzBordered="false">
           <nz-descriptions-item nzTitle="Username">{{ user.username }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Password">
+            <button *ngIf="!showResetPassword" nz-button nzType="link" (click)="toggleResetPassword()">Reset</button>
+            <ng-container *ngIf="showResetPassword">
+              <nz-input-group nzPrefixIcon="lock">
+                <input [(ngModel)]="newPassword" nz-input placeholder="New Password" />
+              </nz-input-group>
+              <button nz-button nzType="primary" (click)="resetPassword()">Update</button>
+            </ng-container>
+          </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Roles">{{ user.roles.join(', ') }}</nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Client">{{ user.client }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Organization">{{ user.client }}</nz-descriptions-item>
           <nz-descriptions-item *ngIf="user.phone" nzTitle="Phone">{{ user.phone }}</nz-descriptions-item>
           <nz-descriptions-item *ngIf="user.email" nzTitle="Email">{{ user.email }}</nz-descriptions-item>
         </nz-descriptions>
-        <span> Note section might have your customer's latest transaction ID for respective project payment </span>
+        <span> Note section might have your customer's latest transaction ID for respective asset's payment </span>
       </div>
       <nz-tabset>
-        <nz-tab nzTitle="Manage Projects">
+        <nz-tab nzTitle="Manage Assets">
           <div *ngIf="projects.length > 0" class="table-responsive">
             <nz-table #basicTable [nzData]="projects" [nzBordered]="true" [nzFrontPagination]="false">
               <thead>
                 <tr>
-                  <th nzWidth="20%">Project Name</th>
+                  <th nzWidth="20%">Asset Name</th>
                   <th nzWidth="30%">Note</th>
-                  <th nzWidth="10%">Payment</th>
+                  <th nzWidth="10%">Amount</th>
                   <th nzWidth="10%">Paid</th>
                   <th nzWidth="30%">Actions</th>
                 </tr>
@@ -31,7 +40,7 @@
               <tbody>
                 <tr *ngFor="let project of projects">
                   <td>{{ project.project }}</td>
-                  <td>{{ project.paid ? "Tran ID: " + project?.tranId : project?.desc }}</td>
+                  <td>{{ project.paid ? "Tran ID: " + (project?.tranId ?? 'Cash') : project?.desc }}</td>
                   <td>{{ project.pay }}</td>
                   <td>{{ project.paid ? 'Yes' : 'No' }}</td>
                   <td class="button-flex">
@@ -48,17 +57,17 @@
             </nz-table>
           </div>
           <div *ngIf="projects.length === 0">
-            <p>No projects found. Please add a project.</p>
+            <p>No Assets found. Please add an asset.</p>
           </div>
         </nz-tab>
-        <nz-tab nzTitle="Add Project">
+        <nz-tab nzTitle="Add Assets">
           <form [formGroup]="addProjectForm" (ngSubmit)="addProjectToUser()" class="admin-form">
             <div nz-row nzGutter="16">
               <div nz-col nzXs="24" nzSm="24" nzMd="12">
                 <nz-form-item>
                   <nz-form-control class="w-100">
                     <nz-input-group nzPrefixIcon="project">
-                      <input formControlName="project" nz-input placeholder="Project Name" />
+                      <input formControlName="project" nz-input placeholder="Asset Name" />
                     </nz-input-group>
                   </nz-form-control>
                 </nz-form-item>
@@ -67,7 +76,7 @@
                 <nz-form-item>
                   <nz-form-control class="w-100">
                     <nz-input-group nzPrefixIcon="dollar">
-                      <input formControlName="pay" nz-input placeholder="Payment" />
+                      <input formControlName="pay" nz-input placeholder="Amount" />
                     </nz-input-group>
                   </nz-form-control>
                 </nz-form-item>
@@ -93,14 +102,19 @@
                 </nz-form-item>
               </div>
             </div>
-            <button nz-button nzType="primary" [disabled]="addProjectForm.invalid">Add Project</button>
+            <div nz-row nzGutter="16">
+              <div nz-col nzXs="24" nzSm="24" nzMd="24">
+                <p>Maximum file size: 50MB. Accepted file types: PDF, Images (JPEG, PNG).</p>
+              </div>
+            </div>
+            <button nz-button nzType="primary" [disabled]="addProjectForm.invalid">Add Asset</button>
           </form>
         </nz-tab>
       </nz-tabset>
     </div>
   </nz-card>
 
-  <nz-modal [(nzVisible)]="isEditModalVisible" nzTitle="Edit Project" (nzOnCancel)="handleCancelEdit()"
+  <nz-modal [(nzVisible)]="isEditModalVisible" nzTitle="Edit Asset" (nzOnCancel)="handleCancelEdit()"
     (nzOnOk)="editProject()">
     <div *nzModalContent>
       <form [formGroup]="editProjectForm" class="admin-form">
@@ -109,7 +123,7 @@
             <nz-form-item>
               <nz-form-control class="w-100">
                 <nz-input-group nzPrefixIcon="project">
-                  <input formControlName="project" nz-input placeholder="Project Name" />
+                  <input formControlName="project" nz-input placeholder="Asset Name" />
                 </nz-input-group>
               </nz-form-control>
             </nz-form-item>
@@ -136,20 +150,27 @@
           </div>
         </div>
         <div nz-row nzGutter="16">
-          <div nz-col nzXs="24" nzSm="24" nzMd="12">
-            <nz-form-item>
-              <nz-form-control class="w-100">
+          <div nz-col nzXs="24" nzSm="24" nzMd="24">
+            <nz-form-item class="w-100">
+              <nz-form-label [nzSpan]="4">Thumbnail</nz-form-label>
+              <nz-form-control>
                 <nz-input-group nzPrefixIcon="picture">
                   <input type="file" (change)="onThumbnailFileChange($event)" class="w-100" />
                 </nz-input-group>
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col nzXs="24" nzSm="24" nzMd="12">
+          <div nz-col nzXs="24" nzSm="24" nzMd="24">
             <nz-form-item>
               <nz-form-control class="w-100">
-                <nz-switch formControlName="paid" nzCheckedChildren="Paid" nzUnCheckedChildren="Unpaid"></nz-switch>
-              </nz-form-control>
+                <nz-form-label [nzSpan]="5">Payment</nz-form-label>
+                <nz-switch [nzDisabled]="!isMaster" formControlName="paid" nzCheckedChildren="Paid"
+                  nzUnCheckedChildren="Unpaid"></nz-switch>
+                <button *ngIf="!editProjectForm.get('paid')?.value" class="mx-2" nz-button nzType="default"
+                  (click)="markAsPaid()">
+                  <nz-icon nzType="wallet" nzTheme="outline" /> Cash
+                </button>
+                              </nz-form-control>
             </nz-form-item>
           </div>
         </div>
