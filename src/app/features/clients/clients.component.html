@@ -1,6 +1,6 @@
-<div *ngIf="cards.length > 3" nz-row [nzGutter]="[16, 16]" class="clients-container filter-bar my-1">
+<div *ngIf="cards.length > 3" nz-row [nzGutter]="[16, 16]" class="clients-container filter-bar">
   <span><nz-icon nzType="filter" nzTheme="outline" /> Filter</span>
-  <div nz-col nzXs="24" nzSm="24" nzMd="4" nzLg="4" class="filter-item">
+  <div nz-col nzXs="24" nzSm="24" nzMd="4" nzLg="4" class="filter-item w-100">
     <nz-date-picker nzMode="month" nzPlaceHolder="Select month" [(ngModel)]="date" (nzOnOpenChange)="onDateChange($event)"></nz-date-picker>
   </div>
   <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="8" class="filter-item">

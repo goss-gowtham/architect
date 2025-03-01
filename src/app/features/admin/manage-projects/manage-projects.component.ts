@@ -8,9 +8,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { CardDTO } from '../../../models/clients.dto';
 import { User, Roles } from '../../../models/user.dto'; // Ensure Roles is imported
 import { ProjectService } from '../../../services/project.service';
-import { UserService } from '../../../services/user.service'; 
+import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service'; // Ensure AuthService is imported
-import {ClipboardModule} from '@angular/cdk/clipboard';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 @Component({
   selector: 'app-manage-projects',
@@ -30,6 +30,8 @@ export class ManageProjectsComponent implements OnInit {
   newPassword: string = ''; // Add this variable to store the new password
   isMaster: boolean = false; // Add this variable to check for master entitlement
   isAdmin: boolean = false; // Add this variable to check for admin entitlement
+  live: boolean = true; // Add this variable for test/live mode
+  isTestModeChanged: boolean = false; // Add this variable to track changes in test/live mode
 
   constructor(
     private route: ActivatedRoute,
@@ -65,8 +67,13 @@ export class ManageProjectsComponent implements OnInit {
       this.userId = params['userId'];
       if (this.userId) {
         this.userService.getUser(this.userId).subscribe(user => { // Update method
-          this.user = user;
-          this.projects = user?.projects || [];
+          if (user) {
+            this.user = user;
+            this.projects = user?.projects || [];
+            this.dbService.getClientDetails(user?.client).subscribe(clientDetails => {
+              this.live = clientDetails.live || false; // Initialize test mode
+            });
+          }
         });
       }
     });
@@ -96,28 +103,28 @@ export class ManageProjectsComponent implements OnInit {
   addProjectToUser() {
     const { project, desc, pay } = this.addProjectForm.value;
     if (this.userId && this.addProjectForm.valid) {
-        const filePath = `projects/${this.userId}/${uuidv4()}_${this.addProjectForm.value.file.name}`;
-        this.dbService.uploadFile(this.addProjectForm.value.file, filePath).subscribe((fileUrl) => {
-            const projectId = uuidv4();
-            const newProject: CardDTO = {
-                projectId,
-                project,
-                desc,
-                pay,
-                thumbnail: '',
-                file: fileUrl,
-                paid: false
-            };
-            this.projectService.addProjectToUser(this.userId!, newProject).subscribe(() => {
-                this.notification.success('Success', 'Asset added successfully');
-                this.projects.push(newProject);
-                this.addProjectForm.reset();
-            }, (error) => {
-                console.error("Error adding asset:", error);
-            });
+      const filePath = `projects/${this.userId}/${uuidv4()}_${this.addProjectForm.value.file.name}`;
+      this.dbService.uploadFile(this.addProjectForm.value.file, filePath).subscribe((fileUrl) => {
+        const projectId = uuidv4();
+        const newProject: CardDTO = {
+          projectId,
+          project,
+          desc,
+          pay,
+          thumbnail: '',
+          file: fileUrl,
+          paid: false
+        };
+        this.projectService.addProjectToUser(this.userId!, newProject).subscribe(() => {
+          this.notification.success('Success', 'Asset added successfully');
+          this.projects.push(newProject);
+          this.addProjectForm.reset();
         }, (error) => {
-            console.error("Error uploading file:", error);
+          console.error("Error adding asset:", error);
         });
+      }, (error) => {
+        console.error("Error uploading file:", error);
+      });
     }
   }
 
@@ -145,39 +152,39 @@ export class ManageProjectsComponent implements OnInit {
     const { projectId, project, desc, pay, paid } = this.editProjectForm.value;
     const thumbnailFile = this.editProjectForm.get('thumbnailFile')?.value;
     if (this.userId && this.editProjectForm.valid) {
-        const updateProjectData = (thumbnailUrl: string) => {
-            const updatedProject: CardDTO = {
-                projectId,
-                project,
-                desc,
-                pay,
-                thumbnail: thumbnailUrl,
-                file: this.projects.find(p => p.projectId === projectId)?.file || '',
-                paid
-            };
-            this.projectService.updateProject(this.userId!, updatedProject).subscribe(() => {
-                this.notification.success('Success', 'Project updated successfully');
-                const index = this.projects.findIndex(p => p.projectId === projectId);
-                if (index !== -1) {
-                    this.projects[index] = updatedProject;
-                }
-                this.editProjectForm.reset();
-                this.isEditModalVisible = false;
-            }, (error) => {
-                console.error("Error updating project:", error);
-            });
+      const updateProjectData = (thumbnailUrl: string) => {
+        const updatedProject: CardDTO = {
+          projectId,
+          project,
+          desc,
+          pay,
+          thumbnail: thumbnailUrl,
+          file: this.projects.find(p => p.projectId === projectId)?.file || '',
+          paid
         };
+        this.projectService.updateProject(this.userId!, updatedProject).subscribe(() => {
+          this.notification.success('Success', 'Project updated successfully');
+          const index = this.projects.findIndex(p => p.projectId === projectId);
+          if (index !== -1) {
+            this.projects[index] = updatedProject;
+          }
+          this.editProjectForm.reset();
+          this.isEditModalVisible = false;
+        }, (error) => {
+          console.error("Error updating project:", error);
+        });
+      };
 
-        if (thumbnailFile) {
-            const filePath = `thumbnails/${this.userId}/${uuidv4()}_${thumbnailFile.name}`;
-            this.dbService.uploadFile(thumbnailFile, filePath).subscribe((thumbnailUrl) => {
-                updateProjectData(thumbnailUrl);
-            }, (error) => {
-                console.error("Error uploading thumbnail:", error);
-            });
-        } else {
-            updateProjectData(this.editProjectForm.get('thumbnail')?.value || '');
-        }
+      if (thumbnailFile) {
+        const filePath = `thumbnails/${this.userId}/${uuidv4()}_${thumbnailFile.name}`;
+        this.dbService.uploadFile(thumbnailFile, filePath).subscribe((thumbnailUrl) => {
+          updateProjectData(thumbnailUrl);
+        }, (error) => {
+          console.error("Error uploading thumbnail:", error);
+        });
+      } else {
+        updateProjectData(this.editProjectForm.get('thumbnail')?.value || '');
+      }
     }
   }
 
@@ -254,5 +261,26 @@ export class ManageProjectsComponent implements OnInit {
 
   navigateBack() {
     this.router.navigate(['/admin']);
+  }
+
+  toggleTestMode() {
+    this.isTestModeChanged = true;
+  }
+
+  updateTestMode() {
+    if (this.user?.client) {
+      const path = `clients/${this.user.client}`;
+      this.dbService.getData(path).subscribe((clientData) => {
+        const updatedClientData = { ...clientData, live: this.live };
+        this.dbService.setData(path, updatedClientData).subscribe(() => {
+          this.notification.success('Success', 'Test mode updated successfully');
+          this.isTestModeChanged = false;
+        }, (error) => {
+          console.error("Error updating test mode:", error);
+        });
+      }, (error) => {
+        console.error("Error fetching client data:", error);
+      });
+    }
   }
 }

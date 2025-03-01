@@ -43,11 +43,14 @@ export class DbService {
         return this.getData('clients');
     }
 
-    addClient(clientName: string, logoUrl: string): Observable<void> {
-        const dbRef = ref(this.database, 'clients/' + clientName);
+    addClient(client: { clientName: string, logoUrl: string, key: string, salt: string }): Observable<void> {
+        const dbRef = ref(this.database, 'clients/' + client.clientName);
         return from(set(dbRef, {
-            name: clientName,
-            logo: logoUrl
+            name: client.clientName,
+            logo: client.logoUrl,
+            key: client.key,
+            salt: client.salt,
+            live: true // Initialize with false
         }).catch((error: any) => {
             console.error("Error adding client:", error);
             throw error;
@@ -64,8 +67,8 @@ export class DbService {
         }));
     }
 
-    getClientLogo(clientName: string): Observable<string> {
-        const dbRef = ref(this.database, 'clients/' + clientName + '/logo');
+    getClientDetails(clientName: string): Observable<{ logo: string, key: string, salt: string, live: boolean }> {
+        const dbRef = ref(this.database, 'clients/' + clientName);
         return from(get(dbRef).then((snapshot) => {
             if (snapshot.exists()) {
                 return snapshot.val();
@@ -74,7 +77,7 @@ export class DbService {
                 return '';
             }
         }).catch((error) => {
-            console.error("Error getting client logo:", error);
+            console.error("Error getting client details:", error);
             throw error;
         }));
     }

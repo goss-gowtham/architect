@@ -27,6 +27,8 @@ export class ClientsComponent implements OnInit {
   searchValue: string = '';
   date: Date | null = null;
   paidFilter: boolean | null = null; // Add this variable for the paid/unpaid filter
+  live: boolean = false; // Add this variable for test/live mode
+  isTestModeChanged: boolean = false; // Add this variable to track changes in test/live mode
 
   constructor(
     private authService: AuthService,
@@ -43,9 +45,9 @@ export class ClientsComponent implements OnInit {
     const currentUser = this.authService.currentUserValue;
     if (currentUser) {
       this.isAdminOrMaster = currentUser.roles.includes(Roles.admin) || currentUser.roles.includes(Roles.master);
-      this.dbService.getClientLogo(currentUser.client).pipe(
-        switchMap((logoUrl: string) => {
-          this.clientLogo = logoUrl;
+      this.dbService.getClientDetails(currentUser.client).pipe(
+        switchMap((clientDetails: { logo: string, key: string, salt: string, live: boolean }) => {
+          this.clientLogo = clientDetails.logo;
           return this.isAdminOrMaster ? this.loadAllUserProjects(currentUser.client) : this.loadCurrentUserProjects(currentUser.id);
         })
       ).subscribe(() => {
@@ -55,7 +57,7 @@ export class ClientsComponent implements OnInit {
           }
         });
       }, (error: any) => {
-        console.error("Error fetching client logo:", error);
+        console.error("Error fetching client details:", error);
       });
     }
   }
@@ -166,15 +168,19 @@ export class ClientsComponent implements OnInit {
   }
 
   initiatePayment(card: CardDTO, user: User) {
-    this.paymentService.initiatePayUPayment(card, user).subscribe({
-      next: () => {
-        console.log("Payment initiation complete");
-        // Handle any additional logic if needed
-      },
-      error: (err) => {
-        console.error("Error initiating payment:", err);
-        this.notification.error('Error', 'Error initiating payment. Please try again.');
-      }
+    const clientName = user.client;
+    this.dbService.getClientDetails(clientName).pipe(
+        switchMap(({ key, salt, live }) => {
+            return this.paymentService.initiatePayUPayment(card, user, key, salt, live);
+        })
+    ).subscribe({
+        next: () => {
+            console.log("Payment initiation complete");
+        },
+        error: (err) => {
+            console.error("Error initiating payment:", err);
+            this.notification.error('Error', 'Error initiating payment. Please try again.');
+        }
     });
   }
 
@@ -219,5 +225,14 @@ export class ClientsComponent implements OnInit {
     this.paidFilter = null;
     this.searchValue = '';
     this.filteredCards = this.cards;
+  }
+
+  toggleTestMode() {
+    this.isTestModeChanged = true;
+  }
+
+  updateTestMode() {
+    this.isTestModeChanged = false;
+    // Update the test mode status in the database if necessary
   }
 }

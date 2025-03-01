@@ -111,6 +111,26 @@
               </nz-form-item>
             </div>
           </div>
+          <div nz-row nzGutter="16">
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <nz-form-item>
+                <nz-form-control class="w-100">
+                  <nz-input-group nzPrefixIcon="key">
+                    <input formControlName="key" nz-input placeholder="Key" />
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <nz-form-item>
+                <nz-form-control class="w-100">
+                  <nz-input-group nzPrefixIcon="lock">
+                    <input formControlName="salt" nz-input placeholder="Salt" />
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
           <button nz-button nzType="primary" [disabled]="addClientForm.invalid">Add Organization</button>
         </form>
       </nz-tab>

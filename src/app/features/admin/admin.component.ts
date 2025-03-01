@@ -47,7 +47,9 @@ export class AdminComponent implements OnInit {
 
     this.addClientForm = this.fb.group({
       clientName: ['', Validators.required],
-      logo: [null, Validators.required]
+      logo: [null, Validators.required],
+      key: ['', Validators.required],
+      salt: ['', Validators.required]
     });
   }
 
@@ -97,11 +99,11 @@ export class AdminComponent implements OnInit {
   }
 
   addClient() {
-    const { clientName } = this.addClientForm.value;
+    const { clientName, logo, key, salt } = this.addClientForm.value;
     if (this.logoFile) {
       const logoPath = `logos/${uuidv4()}_${this.logoFile.name}`;
       this.dbService.uploadFile(this.logoFile, logoPath).subscribe((logoUrl) => {
-        this.dbService.addClient(clientName, logoUrl).subscribe(() => {
+        this.dbService.addClient({ clientName, logoUrl, key, salt }).subscribe(() => {
           this.notification.success('Success', 'Client added successfully');
           this.addClientForm.reset();
           this.logoFile = null;
