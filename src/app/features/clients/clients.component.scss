@@ -12,9 +12,9 @@
 }
 
 .card-shadow {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 16px;
-  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 24px;
+  border-radius: 12px;
   overflow: hidden;
   transition: transform 0.3s ease;
   display: flex;
@@ -31,6 +31,38 @@
   flex-wrap: wrap;
   justify-content: center;
   background-color: #f5f5f5;
+}
+
+.filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
+}
+
+.filter-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.clear-filter-button {
+  background-color: #ff4d4f;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.clear-filter-button:hover {
+  background-color: #ff7875;
 }
 
 .card-cover {
@@ -64,6 +96,18 @@
   bottom: 10px;
   left: 10px;
   font-size: 14px;
+}
+
+.card-date {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.card-date nz-icon {
+  margin-right: 5px;
 }
 
 .modern-card {

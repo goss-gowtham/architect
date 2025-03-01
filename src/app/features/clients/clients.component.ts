@@ -21,8 +21,12 @@ import { map, catchError, switchMap } from 'rxjs/operators';
 })
 export class ClientsComponent implements OnInit {
   cards: CardDTO[] = [];
+  filteredCards: CardDTO[] = [];
   clientLogo: string = '';
   isAdminOrMaster: boolean = false;
+  searchValue: string = '';
+  date: Date | null = null;
+  paidFilter: boolean | null = null; // Add this variable for the paid/unpaid filter
 
   constructor(
     private authService: AuthService,
@@ -82,6 +86,7 @@ export class ClientsComponent implements OnInit {
               username: user.username
             })) : []
           );
+          this.filteredCards = this.cards;
         }
       }),
       catchError((error) => {
@@ -100,6 +105,7 @@ export class ClientsComponent implements OnInit {
             thumbnail: project.thumbnail || this.clientLogo,
             username: user.username
           }));
+          this.filteredCards = this.cards;
         }
       }),
       catchError((error) => {
@@ -170,5 +176,48 @@ export class ClientsComponent implements OnInit {
         this.notification.error('Error', 'Error initiating payment. Please try again.');
       }
     });
+  }
+
+  onPaidFilterChange(paid: boolean) {
+    this.paidFilter = paid;
+    this.applyFilters();
+  }
+
+  onDateChange(open: boolean) {
+    if (!open && this.date) {
+      this.applyFilters();
+    }
+  }
+
+  onSearchChange() {
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    const searchValueLower = this.searchValue.toLowerCase();
+    const selectedMonth = this.date ? this.date.getMonth() : null;
+    const selectedYear = this.date ? this.date.getFullYear() : null;
+
+    this.filteredCards = this.cards.filter(card => {
+      const matchesSearch = card.project.toLowerCase().includes(searchValueLower) ||
+        card.desc.toLowerCase().includes(searchValueLower) ||
+        (card.username && card.username.toLowerCase().includes(searchValueLower)) ||
+        card.pay.toLowerCase().includes(searchValueLower);
+
+      const matchesDate = selectedMonth !== null && selectedYear !== null ? 
+        card.addedDate && new Date(card.addedDate).getMonth() === selectedMonth && new Date(card.addedDate).getFullYear() === selectedYear : 
+        true;
+
+      const matchesPaid = this.paidFilter !== null ? card.paid === this.paidFilter : true;
+
+      return matchesSearch && matchesDate && matchesPaid;
+    });
+  }
+
+  clearFilters() {
+    this.date = null;
+    this.paidFilter = null;
+    this.searchValue = '';
+    this.filteredCards = this.cards;
   }
 }

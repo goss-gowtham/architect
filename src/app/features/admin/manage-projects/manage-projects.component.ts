@@ -96,28 +96,28 @@ export class ManageProjectsComponent implements OnInit {
   addProjectToUser() {
     const { project, desc, pay } = this.addProjectForm.value;
     if (this.userId && this.addProjectForm.valid) {
-      const filePath = `projects/${this.userId}/${uuidv4()}_${this.addProjectForm.value.file.name}`;
-      this.dbService.uploadFile(this.addProjectForm.value.file, filePath).subscribe((fileUrl) => {
-        const projectId = uuidv4();
-        const newProject: CardDTO = {
-          projectId,
-          project,
-          desc,
-          pay,
-          thumbnail: '',
-          file: fileUrl,
-          paid: false
-        };
-        this.projectService.addProjectToUser(this.userId!, newProject).subscribe(() => {
-          this.notification.success('Success', 'Project added successfully');
-          this.projects.push(newProject);
-          this.addProjectForm.reset();
+        const filePath = `projects/${this.userId}/${uuidv4()}_${this.addProjectForm.value.file.name}`;
+        this.dbService.uploadFile(this.addProjectForm.value.file, filePath).subscribe((fileUrl) => {
+            const projectId = uuidv4();
+            const newProject: CardDTO = {
+                projectId,
+                project,
+                desc,
+                pay,
+                thumbnail: '',
+                file: fileUrl,
+                paid: false
+            };
+            this.projectService.addProjectToUser(this.userId!, newProject).subscribe(() => {
+                this.notification.success('Success', 'Asset added successfully');
+                this.projects.push(newProject);
+                this.addProjectForm.reset();
+            }, (error) => {
+                console.error("Error adding asset:", error);
+            });
         }, (error) => {
-          console.error("Error adding project:", error);
+            console.error("Error uploading file:", error);
         });
-      }, (error) => {
-        console.error("Error uploading file:", error);
-      });
     }
   }
 
@@ -181,20 +181,11 @@ export class ManageProjectsComponent implements OnInit {
     }
   }
 
-  // Add this method to handle the "Cash" button click event
   markAsPaid() {
     if (this.isAdmin) {
       this.editProjectForm.patchValue({ paid: true });
     } else {
       this.notification.error('Error', 'Only users with admin entitlement can mark as paid.');
-    }
-  }
-
-  markAsUnpaid() {
-    if (this.isMaster) {
-      this.editProjectForm.patchValue({ paid: false });
-    } else {
-      this.notification.error('Error', 'Only users with master entitlement can mark as unpaid.');
     }
   }
 

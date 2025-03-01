@@ -34,6 +34,7 @@
                   <th nzWidth="30%">Note</th>
                   <th nzWidth="10%">Amount</th>
                   <th nzWidth="10%">Paid</th>
+                  <th nzWidth="20%">Added Date</th> <!-- Add new column -->
                   <th nzWidth="30%">Actions</th>
                 </tr>
               </thead>
@@ -43,6 +44,7 @@
                   <td>{{ project.paid ? "Tran ID: " + (project?.tranId ?? 'Cash') : project?.desc }}</td>
                   <td>{{ project.pay }}</td>
                   <td>{{ project.paid ? 'Yes' : 'No' }}</td>
+                  <td>{{ project.addedDate | date:'shortDate' }}</td>
                   <td class="button-flex">
                     <button nz-button nzType="default" nzShape="round" (click)="selectProjectForEdit(project)">
                       <nz-icon nzType="edit" nzTheme="outline" />Edit

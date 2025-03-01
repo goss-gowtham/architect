@@ -9,4 +9,5 @@ export interface CardDTO {
   paid?: boolean;
   tranId?: string;
   paymentMethod?: string;
+  addedDate?: Date;
 }

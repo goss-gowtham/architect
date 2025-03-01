@@ -1,15 +1,41 @@
-<div nz-row [nzGutter]="[16, 16]" class="clients-container">
-  <div *ngIf="cards.length === 0" class="no-projects-message">
-      <img height="200px" src="assets\draw\undraw_urban-design_tz8n.svg" alt="Fingerprint SVG" class="svg-image"/>
-    <p>No projects available. Request for a project to pay and download.</p>
+<div *ngIf="cards.length > 3" nz-row [nzGutter]="[16, 16]" class="clients-container filter-bar my-1">
+  <span><nz-icon nzType="filter" nzTheme="outline" /> Filter</span>
+  <div nz-col nzXs="24" nzSm="24" nzMd="4" nzLg="4" class="filter-item">
+    <nz-date-picker nzMode="month" nzPlaceHolder="Select month" [(ngModel)]="date" (nzOnOpenChange)="onDateChange($event)"></nz-date-picker>
   </div>
-  <div *ngFor="let card of cards" nz-col nzXs="24" nzSm="12" nzMd="8" nzLg="6" nzXl="6">
+  <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="8" class="filter-item">
+    <nz-input-group [nzSuffix]="suffixIconSearch">
+      <input type="text" nz-input placeholder="Search by Assets" [(ngModel)]="searchValue" (input)="onSearchChange()" />
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <nz-icon nzType="search"></nz-icon>
+    </ng-template>
+  </div>
+  <div nz-col nzXs="24" nzSm="24" nzMd="4" nzLg="4" class="filter-item">
+    <nz-switch [(ngModel)]="paidFilter" nzCheckedChildren="Paid" nzUnCheckedChildren="Unpaid" (ngModelChange)="onPaidFilterChange($event)"></nz-switch>
+  </div>
+  <div nz-col nzXs="24" nzSm="24" nzMd="2" nzLg="2" class="filter-item">
+    <button *ngIf="date || paidFilter !== null || searchValue" nz-button nzType="default" nzSize="large" (click)="clearFilters()">
+      <nz-icon nzType="close-circle" nzTheme="outline" /> Clear
+    </button>
+  </div>
+</div>
+<div nz-row [nzGutter]="[16, 16]" class="clients-container my-1">
+  <div *ngIf="filteredCards.length === 0" class="no-projects-message">
+    <img height="200px" src="assets/draw/undraw_urban-design_tz8n.svg" alt="No projects available" class="svg-image"/>
+    <p>No projects available. Request for a project to pay and download or clear filters.</p>
+  </div>
+  <div *ngFor="let card of filteredCards" nz-col nzXs="24" nzSm="12" nzMd="8" nzLg="6" nzXl="6">
     <nz-card class="card-shadow modern-card" [nzCover]="coverTemplate" [nzActions]="[payDownload]">
       <nz-card-meta
         [nzTitle]="card.project"
         [nzDescription]="card.desc"
         class="card-meta"
       ></nz-card-meta>
+      <div class="card-date">
+        <nz-icon nzType="calendar" nzTheme="outline"></nz-icon>
+        {{ card.addedDate | date: 'dd-MMM-yy' }}
+      </div>
     </nz-card>
     <ng-template #coverTemplate>
       <div class="card-cover">
