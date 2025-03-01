@@ -104,11 +104,11 @@ export class AdminComponent implements OnInit {
       const logoPath = `logos/${uuidv4()}_${this.logoFile.name}`;
       this.dbService.uploadFile(this.logoFile, logoPath).subscribe((logoUrl) => {
         this.dbService.addClient({ clientName, logoUrl, key, salt }).subscribe(() => {
-          this.notification.success('Success', 'Client added successfully');
+          this.notification.success('Success', 'Organization added successfully');
           this.addClientForm.reset();
           this.logoFile = null;
         }, (error) => {
-          console.error("Error adding client:", error);
+          console.error("Error adding organization:", error);
         });
       }, (error) => {
         console.error("Error uploading logo:", error);
