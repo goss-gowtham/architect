@@ -34,7 +34,8 @@ export class UserService {
                         password: hashedPassword,
                         roles: user.roles,
                         client: user.client,
-                        projects: user.projects || []
+                        projects: user.projects || [],
+                        storageUsage: 0 // Initialize storage usage
                     });
                 });
             } else {
@@ -45,7 +46,8 @@ export class UserService {
                         password: hashedPassword,
                         roles: user.roles,
                         client: user.client,
-                        projects: user.projects || []
+                        projects: user.projects || [],
+                        storageUsage: 0 // Initialize storage usage
                     });
                 });
             }
@@ -147,6 +149,18 @@ export class UserService {
                 console.error("Error updating password:", error);
                 throw error;
             });
+        }));
+    }
+
+    updateUserStorageUsage(userId: string, fileSize: number): Observable<void> {
+        const dbRef = ref(this.database, `users/${userId}/storage`);
+        return from(get(dbRef).then((snapshot) => {
+            const currentUsage = snapshot.exists() ? snapshot.val() : 0;
+            const newUsage = currentUsage + fileSize;
+            return set(dbRef, newUsage);
+        }).catch((error) => {
+            console.error("Error updating storage usage:", error);
+            throw error;
         }));
     }
 }

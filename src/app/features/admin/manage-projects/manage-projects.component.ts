@@ -11,6 +11,7 @@ import { ProjectService } from '../../../services/project.service';
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service'; // Ensure AuthService is imported
 import { ClipboardModule } from '@angular/cdk/clipboard';
+import { HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-manage-projects',
@@ -32,6 +33,8 @@ export class ManageProjectsComponent implements OnInit {
   isAdmin: boolean = false; // Add this variable to check for admin entitlement
   live: boolean = true; // Add this variable for test/live mode
   isTestModeChanged: boolean = false; // Add this variable to track changes in test/live mode
+  uploadProgress: number = 0; // Add this variable to track upload progress
+  storage: number = 0; // Add this variable to track storage usage
 
   constructor(
     private route: ActivatedRoute,
@@ -70,6 +73,7 @@ export class ManageProjectsComponent implements OnInit {
           if (user) {
             this.user = user;
             this.projects = user?.projects || [];
+            this.storage = user.storage || 0; // Initialize storage usage
             this.dbService.getClientDetails(user?.client).subscribe(clientDetails => {
               this.live = clientDetails.live || false; // Initialize test mode
             });
@@ -104,24 +108,35 @@ export class ManageProjectsComponent implements OnInit {
     const { project, desc, pay } = this.addProjectForm.value;
     if (this.userId && this.addProjectForm.valid) {
       const filePath = `projects/${this.userId}/${uuidv4()}_${this.addProjectForm.value.file.name}`;
-      this.dbService.uploadFile(this.addProjectForm.value.file, filePath).subscribe((fileUrl) => {
-        const projectId = uuidv4();
-        const newProject: CardDTO = {
-          projectId,
-          project,
-          desc,
-          pay,
-          thumbnail: '',
-          file: fileUrl,
-          paid: false
-        };
-        this.projectService.addProjectToUser(this.userId!, newProject).subscribe(() => {
-          this.notification.success('Success', 'Asset added successfully');
-          this.projects.push(newProject);
-          this.addProjectForm.reset();
-        }, (error) => {
-          console.error("Error adding asset:", error);
-        });
+      this.dbService.uploadFileWithProgress(this.addProjectForm.value.file, filePath).subscribe((event) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          this.uploadProgress = Math.round((100 * event.loaded) / event.total!);
+        } else if (event.type === HttpEventType.Response) {
+          const { downloadURL, fileSize } = event.body;
+          const projectId = uuidv4();
+          const newProject: CardDTO = {
+            projectId,
+            project,
+            desc,
+            pay,
+            thumbnail: '',
+            file: downloadURL,
+            paid: false
+          };
+          this.projectService.addProjectToUser(this.userId!, newProject).subscribe(() => {
+            this.notification.success('Success', 'Asset added successfully');
+            this.projects.push(newProject);
+            this.addProjectForm.reset();
+            this.uploadProgress = 0; // Reset upload progress
+            this.storage += fileSize; // Update storage usage
+            this.userService.updateUserStorageUsage(this.userId!, fileSize).subscribe(() => {
+            }, (error) => {
+              console.error("Error updating storage usage:", error);
+            });
+          }, (error) => {
+            console.error("Error adding asset:", error);
+          });
+        }
       }, (error) => {
         console.error("Error uploading file:", error);
       });

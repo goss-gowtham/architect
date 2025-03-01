@@ -5,6 +5,7 @@ import { from, Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CardDTO } from '../models/clients.dto';
 import { FirebaseService } from './firebase.service';
+import { UserService } from './user.service';
 
 @Injectable({
     providedIn: 'root'
@@ -13,7 +14,7 @@ export class ProjectService {
     private database;
     private storage;
 
-    constructor(private firebaseService: FirebaseService, private http: HttpClient) {
+    constructor(private firebaseService: FirebaseService, private http: HttpClient, private userService: UserService) {
         this.database = this.firebaseService.getDatabase();
         this.storage = this.firebaseService.getStorage();
     }
@@ -25,9 +26,11 @@ export class ProjectService {
             projects.push({
                 ...project,
                 projectId: project.projectId,
-                paid: project.paid || false
+                paid: project.paid || false,
+                addedDate: project.addedDate || new Date() // Ensure addedDate is included as Date object
             });
             return update(ref(this.database, `users/${userId}`), { projects });
+
         }).catch((error) => {
             console.error("Error adding project to user:", error);
             throw error;

@@ -20,6 +20,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzUploadModule } from 'ng-zorro-antd/upload'; // Add this line
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
 
 @NgModule({
   declarations: [AdminComponent, ManageProjectsComponent],
@@ -42,7 +43,8 @@ import { NzCollapseModule } from 'ng-zorro-antd/collapse';
     NzModalModule,
     NzUploadModule,
     NzSpaceModule,
-    NzCollapseModule
+    NzCollapseModule,
+    NzProgressModule
   ],
   providers: [NzNotificationService]
 })

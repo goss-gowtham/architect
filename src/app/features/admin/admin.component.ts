@@ -164,4 +164,14 @@ export class AdminComponent implements OnInit {
   navigateToManageProjects(userId: string) {
     this.router.navigate(['/admin/manage-projects'], { queryParams: { userId } });
   }
+
+  formatStorageUsage(size: number): string {
+    if (size < 1024 * 1024) {
+      return (size / 1024).toFixed(2) + ' KB';
+    } else if (size < 1024 * 1024 * 1024) {
+      return (size / (1024 * 1024)).toFixed(2) + ' MB';
+    } else {
+      return (size / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+    }
+  }
 }

@@ -156,13 +156,17 @@
               </div>
             </div>
             <button nz-button nzType="primary" [disabled]="addProjectForm.invalid">Add Asset</button>
+            <div nz-row nzGutter="16">
+              <div nz-col nzXs="24" nzSm="24" nzMd="24">
+                <nz-progress *ngIf="uploadProgress > 0" [nzPercent]="uploadProgress"></nz-progress>
+              </div>
+            </div>
           </form>
         </nz-tab>
       </nz-tabset>
     </div>
   </nz-card>
   <small> Note section might have your customer's latest transaction ID for respective asset's payment </small>
-
   <nz-modal [(nzVisible)]="isEditModalVisible" nzTitle="Edit Asset" (nzOnCancel)="handleCancelEdit()"
     (nzOnOk)="editProject()">
     <div *nzModalContent>

@@ -14,17 +14,19 @@
               <nz-table #basicTable [nzData]="filteredUserData" [nzBordered]="true" [nzFrontPagination]="false">
                 <thead>
                   <tr>
-                    <th nzWidth="40%">Username</th>
-                    <th nzWidth="30%">Roles</th>
-                    <th *ngIf="isMaster" nzWidth="25%">Client</th>
-                    <th nzWidth="30%">Actions</th>
+                    <th nzWidth="20%">Username</th>
+                    <th *ngIf="isMaster" nzWidth="20%">Roles</th>
+                    <th *ngIf="isMaster" nzWidth="15%">Client</th>
+                    <th nzWidth="20%">Storage</th> <!-- Add new column -->
+                    <th nzWidth="25%">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let user of filteredUserData">
                     <td><a routerLink="/dashboard"> {{ user.username }}</a></td>
-                    <td>{{ user.roles.join(', ') }}</td>
+                    <td *ngIf="isMaster">{{ user.roles.join(', ') }}</td>
                     <td *ngIf="isMaster">{{ user.client }}</td>
+                    <td>{{ formatStorageUsage(user.storage ?? 0) }}</td> <!-- Display storage usage -->
                     <td class="button-flex">
                       <button nz-button nzType="default" nzShape="round" (click)="navigateToManageProjects(user.id)">
                         <nz-icon *ngIf="user?.projects && user.projects.length > 0" nzType="eye" nzTheme="outline"></nz-icon>
