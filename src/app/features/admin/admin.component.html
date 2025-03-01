@@ -22,7 +22,7 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let user of filteredUserData">
-                    <td><a routerLink="/clients"> {{ user.username }}</a></td>
+                    <td><a routerLink="/dashboard"> {{ user.username }}</a></td>
                     <td>{{ user.roles.join(', ') }}</td>
                     <td *ngIf="isMaster">{{ user.client }}</td>
                     <td class="button-flex">

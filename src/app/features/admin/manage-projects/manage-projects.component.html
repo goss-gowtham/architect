@@ -4,161 +4,164 @@
     Clients
   </button>
   <nz-card [nzHoverable]="false" [nzBordered]="false" class="padding-0">
+    <nz-collapse>
+      <nz-collapse-panel nzHeader="Client Detail" [nzActive]="false">
+        <div *ngIf="user">
+          <div nz-row nzGutter="16">
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <div class="user-detail">
+                <small>Username</small>
+                <p class="bold">{{ user.username }}</p>
+              </div>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <div class="user-detail">
+                <small>Password</small>
+                <p class="bold">
+                  <button *ngIf="!showResetPassword" nz-button nzType="link"
+                    (click)="toggleResetPassword()">Reset</button>
+                  <ng-container *ngIf="showResetPassword">
+                    <nz-input-group nzPrefixIcon="lock">
+                      <input [(ngModel)]="newPassword" nz-input placeholder="New Password" />
+                      <button nz-button nzType="primary" (click)="resetPassword()">Update</button>
+                    </nz-input-group>
+                  </ng-container>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div nz-row nzGutter="16">
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <div class="user-detail">
+                <small>Roles</small>
+                <p class="bold">{{ user.roles.join(', ') }}</p>
+              </div>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12">
+              <div class="user-detail">
+                <small>Organization</small>
+                <p class="bold">
+                  {{ user.client }}
+                  <ng-container *ngIf="isMaster">
+                    <nz-switch [(ngModel)]="live" (ngModelChange)="toggleTestMode()" nzCheckedChildren="Live"
+                      nzUnCheckedChildren="Test"></nz-switch>
+                    <button class="mx-2" *ngIf="isTestModeChanged" nz-button nzType="primary"
+                      (click)="updateTestMode()">Update</button>
+                  </ng-container>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div nz-row nzGutter="16" *ngIf="user.phone || user.email">
+            <div nz-col nzXs="12" nzSm="12" nzMd="12" *ngIf="user.phone">
+              <div class="user-detail">
+                <small>Phone</small>
+                <p class="bold">{{ user.phone }}</p>
+              </div>
+            </div>
+            <div nz-col nzXs="12" nzSm="12" nzMd="12" *ngIf="user.email">
+              <div class="user-detail">
+                <small>Email</small>
+                <p class="bold">{{ user.email }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-collapse-panel>
+    </nz-collapse>
     <div class="user-list-section">
-      <nz-collapse>
-        <nz-collapse-panel nzHeader="Client Detail" [nzActive]="false">
-          <div *ngIf="user">
-            <div nz-row nzGutter="16">
-              <div nz-col nzXs="24" nzSm="24" nzMd="12">
-                <div class="user-detail">
-                  <small>Username</small>
-                  <p class="bold">{{ user.username }}</p>
-                </div>
-              </div>
-              <div nz-col nzXs="24" nzSm="24" nzMd="12">
-                <div class="user-detail">
-                  <small>Password</small>
-                  <p class="bold">
-                    <button *ngIf="!showResetPassword" nz-button nzType="link" (click)="toggleResetPassword()">Reset</button>
-                    <ng-container *ngIf="showResetPassword">
-                      <nz-input-group nzPrefixIcon="lock">
-                        <input [(ngModel)]="newPassword" nz-input placeholder="New Password" />
-                        <button nz-button nzType="primary" (click)="resetPassword()">Update</button>
-                      </nz-input-group>
-                    </ng-container>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div nz-row nzGutter="16">
-              <div nz-col nzXs="24" nzSm="24" nzMd="12">
-                <div class="user-detail">
-                  <small>Roles</small>
-                  <p class="bold">{{ user.roles.join(', ') }}</p>
-                </div>
-              </div>
-              <div nz-col nzXs="24" nzSm="24" nzMd="12">
-                <div class="user-detail">
-                  <small>Organization</small>
-                  <p class="bold">
-                    {{ user.client }}
-                    <ng-container *ngIf="isMaster">
-                      <nz-switch [(ngModel)]="live" (ngModelChange)="toggleTestMode()" nzCheckedChildren="Live" nzUnCheckedChildren="Test"></nz-switch>
-                      <button class="mx-2" *ngIf="isTestModeChanged" nz-button nzType="primary" (click)="updateTestMode()">Update</button>
-                    </ng-container>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div nz-row nzGutter="16" *ngIf="user.phone || user.email">
-              <div nz-col nzXs="24" nzSm="24" nzMd="12" *ngIf="user.phone">
-                <div class="user-detail">
-                  <small>Phone</small>
-                  <p class="bold">{{ user.phone }}</p>
-                </div>
-              </div>
-              <div nz-col nzXs="24" nzSm="24" nzMd="12" *ngIf="user.email">
-                <div class="user-detail">
-                  <small>Email</small>
-                  <p class="bold">{{ user.email }}</p>
-                </div>
-              </div>
-            </div>
+      <nz-tabset>
+        <nz-tab nzTitle="Manage Assets">
+          <div *ngIf="projects.length > 0" class="table-responsive">
+            <nz-table #basicTable [nzData]="projects" [nzBordered]="true" [nzFrontPagination]="false">
+              <thead>
+                <tr>
+                  <th nzWidth="20%">Asset Name</th>
+                  <th nzWidth="30%">Note</th>
+                  <th nzWidth="10%">Amount</th>
+                  <th nzWidth="10%">Paid</th>
+                  <th nzWidth="10%">Added Date</th> <!-- Add new column -->
+                  <th nzWidth="20%">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let project of projects">
+                  <td>{{ project.project }}</td>
+                  <td>{{ project.paid ? "Tran ID: " + (project?.tranId ?? 'Cash') : project?.desc }}</td>
+                  <td>{{ project.pay }}</td>
+                  <td>{{ project.paid ? 'Yes' : 'No' }}</td>
+                  <td>{{ project.addedDate | date:'dd/MMM/yy' }}</td>
+                  <td class="button-flex">
+                    <button nz-button nzType="default" nzShape="round" (click)="selectProjectForEdit(project)">
+                      <nz-icon nzType="edit" nzTheme="outline" />Edit
+                    </button>
+                    <button nz-button nzType="default" nzDanger nzShape="round"
+                      (click)="deleteProject(project.projectId)">
+                      <nz-icon nzType="delete" nzTheme="outline" />Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
           </div>
-        </nz-collapse-panel>
-      </nz-collapse>
-      <small> Note section might have your customer's latest transaction ID for respective asset's payment </small>
+          <div *ngIf="projects.length === 0">
+            <p>No Assets found. Please add an asset.</p>
+          </div>
+        </nz-tab>
+        <nz-tab nzTitle="Add Assets">
+          <form [formGroup]="addProjectForm" (ngSubmit)="addProjectToUser()" class="admin-form">
+            <div nz-row nzGutter="16">
+              <div nz-col nzXs="24" nzSm="24" nzMd="12">
+                <nz-form-item>
+                  <nz-form-control class="w-100">
+                    <nz-input-group nzPrefixIcon="project">
+                      <input formControlName="project" nz-input placeholder="Asset Name" />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col nzXs="24" nzSm="24" nzMd="12">
+                <nz-form-item>
+                  <nz-form-control class="w-100">
+                    <nz-input-group nzPrefixIcon="dollar">
+                      <input formControlName="pay" nz-input placeholder="Amount" />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div nz-row nzGutter="16">
+              <div nz-col nzXs="24" nzSm="24" nzMd="24">
+                <nz-form-item>
+                  <nz-form-control class="w-100">
+                    <nz-input-group nzPrefixIcon="info-circle">
+                      <input formControlName="desc" nz-input placeholder="Description" />
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div nz-row nzGutter="16">
+              <div nz-col nzXs="24" nzSm="24" nzMd="12">
+                <nz-form-item>
+                  <nz-form-control nzErrorTip="Please upload a file!">
+                    <input type="file" (change)="onProjectFileChange($event)" class="w-100" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div nz-row nzGutter="16">
+              <div nz-col nzXs="24" nzSm="24" nzMd="24">
+                <p>Maximum file size: 50MB. Accepted file types: PDF, Images (JPEG, PNG).</p>
+              </div>
+            </div>
+            <button nz-button nzType="primary" [disabled]="addProjectForm.invalid">Add Asset</button>
+          </form>
+        </nz-tab>
+      </nz-tabset>
     </div>
-    <nz-tabset>
-      <nz-tab nzTitle="Manage Assets">
-        <div *ngIf="projects.length > 0" class="table-responsive">
-          <nz-table #basicTable [nzData]="projects" [nzBordered]="true" [nzFrontPagination]="false">
-            <thead>
-              <tr>
-                <th nzWidth="20%">Asset Name</th>
-                <th nzWidth="30%">Note</th>
-                <th nzWidth="10%">Amount</th>
-                <th nzWidth="10%">Paid</th>
-                <th nzWidth="10%">Added Date</th> <!-- Add new column -->
-                <th nzWidth="20%">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let project of projects">
-                <td>{{ project.project }}</td>
-                <td>{{ project.paid ? "Tran ID: " + (project?.tranId ?? 'Cash') : project?.desc }}</td>
-                <td>{{ project.pay }}</td>
-                <td>{{ project.paid ? 'Yes' : 'No' }}</td>
-                <td>{{ project.addedDate | date:'dd/MMM/yy' }}</td>
-                <td class="button-flex">
-                  <button nz-button nzType="default" nzShape="round" (click)="selectProjectForEdit(project)">
-                    <nz-icon nzType="edit" nzTheme="outline" />Edit
-                  </button>
-                  <button nz-button nzType="default" nzDanger nzShape="round"
-                    (click)="deleteProject(project.projectId)">
-                    <nz-icon nzType="delete" nzTheme="outline" />Delete
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </nz-table>
-        </div>
-        <div *ngIf="projects.length === 0">
-          <p>No Assets found. Please add an asset.</p>
-        </div>
-      </nz-tab>
-      <nz-tab nzTitle="Add Assets">
-        <form [formGroup]="addProjectForm" (ngSubmit)="addProjectToUser()" class="admin-form">
-          <div nz-row nzGutter="16">
-            <div nz-col nzXs="24" nzSm="24" nzMd="12">
-              <nz-form-item>
-                <nz-form-control class="w-100">
-                  <nz-input-group nzPrefixIcon="project">
-                    <input formControlName="project" nz-input placeholder="Asset Name" />
-                  </nz-input-group>
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-            <div nz-col nzXs="24" nzSm="24" nzMd="12">
-              <nz-form-item>
-                <nz-form-control class="w-100">
-                  <nz-input-group nzPrefixIcon="dollar">
-                    <input formControlName="pay" nz-input placeholder="Amount" />
-                  </nz-input-group>
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-          </div>
-          <div nz-row nzGutter="16">
-            <div nz-col nzXs="24" nzSm="24" nzMd="24">
-              <nz-form-item>
-                <nz-form-control class="w-100">
-                  <nz-input-group nzPrefixIcon="info-circle">
-                    <input formControlName="desc" nz-input placeholder="Description" />
-                  </nz-input-group>
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-          </div>
-          <div nz-row nzGutter="16">
-            <div nz-col nzXs="24" nzSm="24" nzMd="12">
-              <nz-form-item>
-                <nz-form-control nzErrorTip="Please upload a file!">
-                  <input type="file" (change)="onProjectFileChange($event)" class="w-100" />
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-          </div>
-          <div nz-row nzGutter="16">
-            <div nz-col nzXs="24" nzSm="24" nzMd="24">
-              <p>Maximum file size: 50MB. Accepted file types: PDF, Images (JPEG, PNG).</p>
-            </div>
-          </div>
-          <button nz-button nzType="primary" [disabled]="addProjectForm.invalid">Add Asset</button>
-        </form>
-      </nz-tab>
-    </nz-tabset>
   </nz-card>
+  <small> Note section might have your customer's latest transaction ID for respective asset's payment </small>
 
   <nz-modal [(nzVisible)]="isEditModalVisible" nzTitle="Edit Asset" (nzOnCancel)="handleCancelEdit()"
     (nzOnOk)="editProject()">
