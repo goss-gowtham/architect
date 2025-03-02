@@ -19,7 +19,7 @@ export class PaymentService {
     const transactionId = uuidv4(); // Generate a unique transaction ID
     const refererUrl = window.location.origin;
     const successUrl = `https://us-central1-architect-design-7.cloudfunctions.net/updatePaidProjects?userId=${user.id}&projectId=${card.projectId}&tranId=${transactionId}&referer=${encodeURIComponent(refererUrl)}`;
-    const failureUrl = `${window.location.origin}/architect/dashboard?status=failure`;
+    const failureUrl = `${window.location.origin}/assets/dashboard?status=failure`;
     const hashString = `${!live ? this.key : key}|${transactionId}|${card.pay}|${card.project}|${card.username}|${user.email}|||||||||||${!live ? this.salt : salt}`;
 
     return this.generateHash(hashString).pipe(

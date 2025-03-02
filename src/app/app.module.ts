@@ -65,7 +65,7 @@ registerLocaleData(en);
     provideNzI18n(en_US),
     provideAnimationsAsync(),
     provideHttpClient(),
-    { provide: APP_BASE_HREF, useValue: '/architect/' }
+    { provide: APP_BASE_HREF, useValue: '/assets/' }
   ]
 })
 export class AppModule { }

@@ -25,7 +25,7 @@ export const updatePaidProjects = functions.https.onRequest(async (req, res): Pr
                 userData.projects[projectIndex].paid = true;
                 userData.projects[projectIndex].tranId = tranId;
                 await userRef.update({ projects: userData.projects });
-                const redirectUrl = `${referer}/architect/dashboard?status=success&projectId=${projectId}&userId=${userId}`;
+                const redirectUrl = `${referer}/assets/dashboard?status=success&projectId=${projectId}&userId=${userId}`;
                 res.redirect(302, redirectUrl);
             } else {
                 res.status(404).send('Project not found');

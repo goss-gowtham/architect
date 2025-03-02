@@ -12,7 +12,7 @@ export class AppComponent implements OnInit {
   visible = false;
   isLoggedIn = false;
   currentUser: any;
-  pageTitle: string = "Architect Design";
+  pageTitle: string = "Assets";
 
   constructor(private authService: AuthService, private router: Router) {
     this.authService.currentUser.subscribe(user => {
@@ -42,9 +42,9 @@ export class AppComponent implements OnInit {
   // Add this method to update the page title
   private updatePageTitle(): void {
     if (this.currentUser) {
-      this.pageTitle = this.currentUser.client || "Architect Design";
+      this.pageTitle = this.currentUser.client || "Assets";
     } else {
-      this.pageTitle = "Architect Design";
+      this.pageTitle = "Assets";
     }
   }
 }
